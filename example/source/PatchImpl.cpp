@@ -1,4 +1,13 @@
 #include "Patch.h"
+/**
+ * Roland Juno-60 style chorus effect implementation for Polyend Endless SDK.
+ * 
+ * Core Design Principles:
+ * - Shared triangle LFO between left and right delay lines.
+ * - Stereo width achieved via phase inversion of the LFO on the right channel.
+ * - Fixed modes (I, II, and I+II) with specific rates and depths.
+ * - Authentic delay range: ~1.66 ms to ~5.35 ms.
+ */
 
 #include <algorithm>
 #include <cmath>
@@ -8,9 +17,15 @@
 #define M_PI 3.14159265358979323846f
 #endif
 
+/**
+ * Simple delay line with linear interpolation.
+ */
 class DelayLine
 {
   public:
+    /**
+     * Initializes the delay line with an external buffer.
+     */
     void init(float* buffer, size_t size)
     {
         m_buffer = buffer;
@@ -32,6 +47,9 @@ class DelayLine
         m_writePos = (m_writePos + 1) % m_size;
     }
 
+    /**
+     * Reads a sample from the delay line with fractional delay using linear interpolation.
+     */
     float read(float delaySamples) const
     {
         if (!m_buffer) return 0.0f;
@@ -54,6 +72,9 @@ class DelayLine
     size_t m_writePos = 0;
 };
 
+/**
+ * One-pole low-pass filter for tone control and signal conditioning.
+ */
 class OnePoleLP
 {
   public:
@@ -97,77 +118,92 @@ class PatchImpl : public Patch
     {
         const float sampleRate = static_cast<float>(kSampleRate);
         
+        // Determine the active chorus mode based on base mode and I+II toggle.
         ChorusMode activeMode = m_modeIplusII ? ChorusMode::kIplusII : m_currentBaseMode;
         
+        // Juno-60 hardware-matched LFO rates and depths.
         float rate = 0.513f;
         float depth = 1.0f;
         
         switch (activeMode)
         {
             case ChorusMode::kI:
-                rate = 0.513f;
+                rate = 0.513f;  // ~0.513 Hz
                 depth = 1.0f;
                 break;
             case ChorusMode::kII:
-                rate = 0.863f;
+                rate = 0.863f;  // ~0.863 Hz
                 depth = 1.0f;
                 break;
             case ChorusMode::kIplusII:
-                rate = 9.75f;
-                depth = 0.2f;
+                rate = 9.75f;   // ~9.75 Hz
+                depth = 0.2f;   // Reduced depth for I+II mode
                 break;
         }
 
+        // Authentic Mix mapping: 50/50 mix until 0.95, then ramps to 100% wet.
         float mix = getMix(m_knobMix);
         
+        // Tone control: Dead zone between 0.4 and 0.6, scaling LP cutoff from 6kHz to 12kHz.
         float cutoff = 9000.0f;
         if (m_knobTone < 0.4f) cutoff = 6000.0f + (m_knobTone / 0.4f) * 3000.0f;
         else if (m_knobTone > 0.6f) cutoff = 9000.0f + ((m_knobTone - 0.6f) / 0.4f) * 3000.0f;
         
         m_filterL.setCutoff(cutoff, sampleRate);
         m_filterR.setCutoff(cutoff, sampleRate);
+        
+        // Fixed input pre-filtering at ~10kHz.
         m_inputLP.setCutoff(10000.0f, sampleRate);
         
+        // Hardware delay constraints: ~1.66ms to ~5.35ms.
         const float minDelaySamples = 0.00166f * sampleRate;
         const float maxDelaySamples = 0.00535f * sampleRate;
         const float delayRange = maxDelaySamples - minDelaySamples;
 
         for (size_t i = 0; i < audioBufferLeft.size(); ++i)
         {
+            // Mono input summing (authentic Juno-60 chorus input).
             float input = (audioBufferLeft[i] + audioBufferRight[i]) * 0.5f;
             
-            // Subtle noise
+            // Subtle analog noise for character.
             input += getNoise() * 0.00005f;
             
+            // Input signal conditioning.
             input = m_inputLP.process(input);
 
-            // Triangle LFO: 4 * abs(phase - 0.5) - 1
+            // Shared Triangle LFO: 4 * abs(phase - 0.5) - 1
             float lfo = 4.0f * std::abs(m_lfoPhase - 0.5f) - 1.0f;
             lfo *= depth;
 
             m_lfoPhase += rate / sampleRate;
             if (m_lfoPhase >= 1.0f) m_lfoPhase -= 1.0f;
 
+            // Stereo Width: Left channel uses LFO directly, Right channel is inverted.
+            // Width knob controls the amount of inversion/phase-offset.
             float leftMod = lfo;
             float rightMod = lfo * (1.0f - m_knobWidth * 4.0f);
             rightMod = std::clamp(rightMod, -1.0f, 1.0f);
 
+            // Map LFO to delay range.
             float delayL = minDelaySamples + delayRange * ((leftMod + 1.0f) * 0.5f);
             float delayR = minDelaySamples + delayRange * ((rightMod + 1.0f) * 0.5f);
 
             m_delayLineL.write(input);
             m_delayLineR.write(input);
 
+            // Read from delay lines with linear interpolation.
             float wetL = m_delayLineL.read(delayL);
             float wetR = m_delayLineR.read(delayR);
             
+            // Apply Tone control LP filters.
             wetL = m_filterL.process(wetL);
             wetR = m_filterR.process(wetR);
             
-            // Subtle saturation
+            // Subtle saturation (tanh) for analog warmth.
             wetL = std::tanh(wetL * 1.05f);
             wetR = std::tanh(wetR * 1.05f);
 
+            // Final dry/wet mix.
             audioBufferLeft[i] = input * (1.0f - mix) + wetL * mix;
             audioBufferRight[i] = input * (1.0f - mix) + wetR * mix;
         }
@@ -187,11 +223,13 @@ class PatchImpl : public Patch
 
     void handleAction(int idx) override
     {
+        // Toggle between Mode I and Mode II on short press.
         if (idx == static_cast<int>(endless::ActionId::kLeftFootSwitchPress))
         {
             m_modeIplusII = false;
             m_currentBaseMode = (m_currentBaseMode == ChorusMode::kI) ? ChorusMode::kII : ChorusMode::kI;
         }
+        // Engage/Toggle Mode I+II on long press (SDK hold).
         else if (idx == static_cast<int>(endless::ActionId::kLeftFootSwitchHold))
         {
             m_modeIplusII = !m_modeIplusII;
@@ -200,17 +238,24 @@ class PatchImpl : public Patch
 
     Color getStateLedColor() override
     {
+        // LED indication: Blue (I+II), Dark Red (I), Dark Lime (II).
         if (m_modeIplusII) return Color::kBlue;
         return (m_currentBaseMode == ChorusMode::kI) ? Color::kDarkRed : Color::kDarkLime;
     }
 
   private:
+    /**
+     * Helper to compute the authentic Mix value.
+     */
     float getMix(float knob) const
     {
         if (knob < 0.95f) return 0.5f;
         return 0.5f + ((knob - 0.95f) / 0.05f) * 0.5f;
     }
 
+    /**
+     * Simple linear congruential generator for subtle noise.
+     */
     float getNoise()
     {
         m_noiseState = m_noiseState * 1664525 + 1013904223;
