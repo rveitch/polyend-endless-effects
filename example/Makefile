@@ -9,7 +9,7 @@ AS = $(TOOLCHAIN)gcc
 LD = $(CXX)
 OBJCOPY = $(TOOLCHAIN)objcopy
 
-BUILD_DIR := build
+BUILD_DIR ?= build
 
 COMMON_FLAGS := -Wall -Wextra -Werror -fno-builtin -fno-common -ffunction-sections -fdata-sections \
                 -fsingle-precision-constant -g -mfloat-abi=hard -mthumb \
@@ -22,7 +22,8 @@ CXXFLAGS := $(COMMON_FLAGS) -std=c++20 -includecstdint -felide-constructors -Wno
 INCLUDES :=
 
 SRC_C := $(wildcard internal/*.c)
-SRC_CPP := $(wildcard source/*.cpp)
+PATCH_IMPL ?= source/PatchImpl.cpp
+SRC_CPP := $(filter-out source/PatchImpl.cpp,$(wildcard source/*.cpp)) $(PATCH_IMPL)
 SRC_CPP += $(wildcard internal/*.cpp)
 OBJ := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC_C)) $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SRC_CPP))
 

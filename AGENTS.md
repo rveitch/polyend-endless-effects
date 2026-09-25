@@ -27,3 +27,7 @@ Read `docs/README.md`, `docs/code-audit.md`, and `docs/completion-plan.md` befor
 - Keep original dry channels available when designing stereo routing. Do not infer cable configuration by looking for silence.
 
 Use const and camelCase where appropriate; preserve SDK names and existing ABI conventions. Prefer named module-level functions and avoid `++` / `--` in new code. Avoid em dashes in prose. Check applicable CLion inspections when the connector is available and report when it is not.
+
+## Pass-through diagnostic
+
+Branch `diagnostic/passthrough` adds `example/diagnostic/`; see its README for build and REW procedures. It reuses the SDK while excluding the chorus implementation. Use the dedicated Makefile and build directory. Preserve both audio channels exactly; hardware validation is separate from host sample-preservation tests.
