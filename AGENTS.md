@@ -5,7 +5,7 @@ Read `docs/README.md`, `docs/code-audit.md`, and `docs/completion-plan.md` befor
 ## Ownership and current state
 
 - This Git repository owns the effect. The active target is `example/`, including its own copied SDK headers and wrappers. The sibling `../FxPatchSDK/` is not linked into this build.
-- At baseline commit `bc31ea43a596f6f19fcffdaf1db41efd5614376e`, `example/source/PatchImpl.cpp` contains two complete definitions. This is a verified target-build failure, not merely an IDE warning.
+- At baseline commit `bc31ea43a596f6f19fcffdaf1db41efd5614376e`, `example/source/PatchImpl.cpp` contained two complete definitions. Branch `fix/chorus-build` removes the earlier duplicate and retains the later DSP revision; the ARM target build passes, but the DSP audit remains open.
 - The later block is an experimental revision, not a verified hardware model. See the audit before choosing which behavior to retain.
 - Do not overwrite working-tree changes, update the upstream SDK, or deploy a pedal without task authorization. Check status before editing. Keep the shared ChatGPT `sources/` mirror read-only.
 

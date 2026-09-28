@@ -55,3 +55,28 @@ JetBrains Context semantic search also returned HTTP 404 for both child reposito
 - No pedal deployment, firmware update or audio-hardware validation occurred.
 
 Temporary paths are diagnostic artifacts, not durable release locations. Do not use the successful SDK bitcrusher binary as the Juno effect.
+
+## Build repair and diagnostic configurations, 2026-09-28
+
+Branch `fix/chorus-build` builds on `diagnostic/passthrough`. It removes the
+original implementation duplicated in `example/source/PatchImpl.cpp`, retaining
+the later revision without changing its DSP. A fresh ARM build passes. The
+pass-through diagnostic builds separately with `-f diagnostic/Makefile`; its
+`test` target now works with both relative and absolute `BUILD_DIR` values.
+
+Both aggregate `polyend/.idea/runConfigurations/` and old
+`polyend/endless/.idea/runConfigurations/` views now have these Makefile Target
+configurations: `chorus_build`, `passthrough_build`, and `passthrough_test`.
+The existing `all` and `clean` entries have an explicit working directory.
+Select these Makefile Target entries in CLion. The old `endless/` project's
+local `workspace.xml` had stale `Native Application` entries named `all` and
+`build`; they were removed and `passthrough_build` was selected. The `.idea`
+files live outside this Git repository and are machine-local.
+
+The `chorus_build` config names the output `juno_chorus_<timestamp>.endl` via
+`PATCH_NAME`; `passthrough_build` produces
+`endless_passthrough_<timestamp>.endl`. No hardware deployment was performed.
+The aggregate CLion project discovered the new configurations automatically.
+Both its `passthrough_build` and `chorus_build` configurations ran successfully
+and produced named `.endl` files. The old `endless/` project view has not been
+opened for UI verification.

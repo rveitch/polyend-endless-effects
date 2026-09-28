@@ -15,7 +15,7 @@ Research and local verification date: **2026-09-19**. This notebook records evid
 
 ## Current assessment
 
-The project has a usable SDK and compiler, but the committed effect cannot build because `PatchImpl.cpp` includes two full implementations. The later revision is a musical experiment with a dual-rate I+II mode, not a calibrated model of the measured Juno-60 both-button behavior.
+The project has a usable SDK and compiler. The baseline commit has two complete implementations in `PatchImpl.cpp` and fails to build. Branch `fix/chorus-build` removes the earlier duplicate; the later revision builds but remains a musical experiment with a dual-rate I+II mode, not a calibrated model of the measured Juno-60 both-button behavior.
 
 The recommended direction is a measured Juno-60 baseline, with any lush parallel I+II variant clearly treated as an extension. This is a recommendation awaiting Ryan's target preference, not a retroactive change to his requirements.
 

@@ -1,12 +1,12 @@
 # Current implementation audit
 
-Verified 2026-09-19 at effects commit `bc31ea43a596f6f19fcffdaf1db41efd5614376e`. Line references describe that baseline; refresh them after edits. The complete 600-line implementation was available to inspect. No DSP source was changed during this audit.
+Verified 2026-09-19 at effects commit `bc31ea43a596f6f19fcffdaf1db41efd5614376e`. Line references describe that historical baseline. On branch `fix/chorus-build`, the duplicate first implementation has been removed; the later implementation is retained unchanged and the ARM build passes. Other DSP findings below remain open and have not been hardware-validated.
 
 ## 1. Build blocker: two complete implementations
 
 `example/source/PatchImpl.cpp:1–289` contains the original implementation. Lines `290–600` repeat the include, `DelayLine`, `OnePoleLP`, `PatchImpl`, static `patch` and `Patch::getInstance()` definitions.
 
-The April 2 v2 commit appended a new version rather than replacing the old one. A real ARM target build failed with redefinitions at lines 313, 363, 382, 595 and 597. This is the first repair required before producing any new effect binary.
+The April 2 v2 commit appended a new version rather than replacing the old one. A real ARM target build failed with redefinitions at lines 313, 363, 382, 595 and 597. The build repair on `fix/chorus-build` removes the earlier duplicate block and retains the later revision. It does not resolve the DSP issues below.
 
 Do not assume an existing `.endl` represents this commit. Record hashes and provenance of any currently installed or saved effect before comparing sound.
 

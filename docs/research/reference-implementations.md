@@ -1,6 +1,6 @@
 # Public chorus implementation references
 
-Checked 2026-09-19. Source inspection is not a build, audio-quality test, or performance benchmark.
+Checked 2026-09-19; Nexbit comparison added 2026-09-23. Source inspection is not a build, audio-quality test, or performance benchmark.
 
 ## Hera: useful clock-driven research implementation
 
@@ -59,6 +59,22 @@ The interpolation is recursive: with fractional position `f`, its output is the 
 Pinned master: `bb9bfbfa76d3c6a86379ce292ba5926b2d9f3154`. Its [wrapper](https://github.com/soerenbnoergaard/talchorus/blob/bb9bfbfa76d3c6a86379ce292ba5926b2d9f3154/src/talchorus/TalChorus.cpp#L174-L226) forwards stereo samples and two enable flags to `ChorusEngine`. The DSP comes from its pinned `distrho-ports` submodule, commit `65c7c68a79e532d01695466f5b94c0e1cc4ae940`, not an unpinned present-day NoiseMaker download.
 
 Inspected [that engine](https://github.com/DISTRHO/DISTRHO-Ports/blob/65c7c68a79e532d01695466f5b94c0e1cc4ae940/ports/tal-noisemaker/source/Effects/Chorus/ChorusEngine.h#L83-L110), [delay implementation](https://github.com/DISTRHO/DISTRHO-Ports/blob/65c7c68a79e532d01695466f5b94c0e1cc4ae940/ports/tal-noisemaker/source/Effects/Chorus/Chorus.h#L103-L145), and `OnePoleLP.h`. The relevant rates, four-delay topology, 7 ms scale with 0.3/0.4 mapping, recursive interpolation, fixed 0.95 filtering argument and 1.4 wet gain agree with YKChorus. They are two integrations of the same public lineage, not two independent validations of hardware behavior. The wrapper's permissive header does not change the TAL engine's GPL-2.0 terms.
+
+### Nexbit NoiseMaker: direct source comparison, 2026-09-23
+
+Ryan supplied [Nexbit/tal-noisemaker's chorus directory](https://github.com/Nexbit/tal-noisemaker/tree/abf3f3c35118d3760e14d24278ff5e5ec0b1e38e/src/Effects/Chorus). Verified `master` at `abf3f3c35118d3760e14d24278ff5e5ec0b1e38e`, dated 2014-08-25. Rechecked `soerenbnoergaard/talchorus`: its master remains `bb9bfbfa76d3c6a86379ce292ba5926b2d9f3154`.
+
+Read all four files in the Nexbit chorus directory and compared them directly with talchorus's pinned DISTRHO engine:
+
+- `ChorusEngine.h` is identical after newline normalization. This is the same four-delay, 0.5/0.83 Hz, stereo-preserving, parallel both-enabled architecture already described above, not an independent hardware model.
+- `Chorus.h` retains the same triangle trajectory, `(0.3*lfo+0.4)*7 ms` nominal delay, recursive interpolation and 0.95 low-pass argument. Its buffer allocation is `floor(7 ms * sampleRate) + 2001`, versus twice that floored sample count in DISTRHO. At 48 kHz those are 2,337 versus 672 floats per delay. Buffer capacity does not change the specified modulation range.
+- Nexbit's destructor uses scalar `delete` for a buffer allocated with `new[]` and does not delete its allocated `Lfo`. DISTRHO corrects these to `delete[]` and `delete lfo`. These are concrete reasons to avoid a verbatim port of the older source.
+- Nexbit adds small constant denormal-prevention offsets in `DCBlock.h` and `OnePoleLP.h`; the compared DISTRHO versions remove them. These are not a calibrated analog hiss generator. The versions should not be assumed to produce bit-identical silence or tails.
+- The shared engine's constructor does not initialize its enable flags, and `setUpChorus()` allocates new objects without first releasing old ones. A standalone renderer must explicitly set mode before processing and manage sample-rate changes deliberately. These observations do not establish how a complete plugin host invokes those methods.
+
+Sources: [Nexbit engine](https://github.com/Nexbit/tal-noisemaker/blob/abf3f3c35118d3760e14d24278ff5e5ec0b1e38e/src/Effects/Chorus/ChorusEngine.h), [Nexbit delay](https://github.com/Nexbit/tal-noisemaker/blob/abf3f3c35118d3760e14d24278ff5e5ec0b1e38e/src/Effects/Chorus/Chorus.h), [compared DISTRHO delay](https://github.com/DISTRHO/DISTRHO-Ports/blob/65c7c68a79e532d01695466f5b94c0e1cc4ae940/ports/tal-noisemaker/source/Effects/Chorus/Chorus.h). The Nexbit headers carry GPL-v2 notices.
+
+This strengthens the provenance of the TAL-derived reference without making it a Juno circuit specification or proving identity with current TAL-Chorus-LX. A future finite offline renderer of a pinned engine could give reproducible software reference WAVs without interface or transport latency. It would need explicit initialization, separately recorded integration fixes and validation against the corresponding plugin. No renderer was built and no audio comparison was performed in this pass.
 
 ### Comparison with this project's two baseline blocks
 
