@@ -59,3 +59,15 @@ User removed the pedal and connected Alpha 8 output 1 directly to input 1 using 
 The measured level change was 24.0002 dB. Neither direct take clipped digitally. Reference RMS remained consistent with preceding captures. See `direct-TS-analysis.json` and the updated manifest beside the REAPER session for raw filenames and hashes.
 
 This excludes the direct channel-1 interface/cable path as the source of the previously measured large harmonics under this configuration. It does not distinguish pedal input electronics, firmware bypass processing, return connection, or an incorrectly identified earlier pedal state. Next: reconnect the pedal, explicitly establish bypass, and repeat the -24 dBFS capture before attributing the distortion to a particular stage.
+
+## Explicit bypass recheck after reconnection
+
+User restored the pedal cabling and explicitly confirmed bypass. At nominal -24 dBFS RMS, measured L/R RMS was -25.0536/-25.0685 dBFS, with harmonic ratios 7.66498%/7.54250%. The simultaneous reference remained -24.1749 dBFS with 0.0001845% harmonics. This closely reproduces the initial bypass capture after reconnection. No full-scale samples. `bypass-recheck-analysis.json` beside the REAPER session records file hashes.
+
+Next diagnostic: engage the current chorus with primary Mix swept to zero, leaving firmware secondary Input/Output/Mix untouched, and compare the same stimulus. This tests whether the observed distortion also occurs through the patch's validated dry path, without conflating it with wet-path saturation. Firmware secondary control scaling and exact signal ordering remain undocumented.
+
+## Engaged dry recheck and correction to REW interpretation
+
+With the pedal engaged and primary Mix swept to zero, nominal -24 dBFS tone measured -25.0516/-25.0683 dBFS RMS L/R and 7.66511%/7.54271% harmonic ratios. This matches bypass closely; the wet chorus algorithm is not required for the observed distortion. `dry0-recheck-analysis.json` contains raw filenames and hashes.
+
+Retrospective REW API distortion inspection of the four saved `Endless mixTest I bypass R` and `dry0 R` takes found **3.01% THD at 1000 Hz in all four**, dominated by H3. Earlier gain/timing comparisons had not inspected this data. Thus distortion was already present in those REW measurements; a matching bypass/dry response did not establish a distortion-free path. `rew-prior-distortion.json` preserves UUIDs and exported 1 kHz rows. REW sweep and REAPER steady-tone values use different methods and possibly effective levels; their numerical difference is not yet explained.
