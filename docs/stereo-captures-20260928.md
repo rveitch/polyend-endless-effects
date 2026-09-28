@@ -46,3 +46,16 @@ Use -48 dBFS for like-for-like comparisons until routing, converter operating le
 2. Use a suitable broadband or multi-frequency stimulus and documented reference captures to estimate wet response and delay behavior. This single tone cannot establish absolute wet delay or overall tonal accuracy.
 3. Compare the intended Juno I+II target with the current stereo dual-rate behavior before changing DSP.
 4. Preserve the diagnostic Mix mapping until validation is complete, then restore the agreed mostly static final-product control behavior.
+
+## Direct TS follow-up
+
+User removed the pedal and connected Alpha 8 output 1 directly to input 1 using the existing TS send cable; ADAT 3 reference and interface settings were unchanged. Recording track switched to mono input ADAT 1.
+
+| Nominal stimulus RMS | Measured direct RMS | Harmonics 2-20 / fundamental |
+| --- | --- | --- |
+| -24 dBFS | -24.3543 dBFS | 0.000219% |
+| -48 dBFS | -48.3544 dBFS | 0.001248% |
+
+The measured level change was 24.0002 dB. Neither direct take clipped digitally. Reference RMS remained consistent with preceding captures. See `direct-TS-analysis.json` and the updated manifest beside the REAPER session for raw filenames and hashes.
+
+This excludes the direct channel-1 interface/cable path as the source of the previously measured large harmonics under this configuration. It does not distinguish pedal input electronics, firmware bypass processing, return connection, or an incorrectly identified earlier pedal state. Next: reconnect the pedal, explicitly establish bypass, and repeat the -24 dBFS capture before attributing the distortion to a particular stage.

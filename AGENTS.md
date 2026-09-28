@@ -40,3 +40,5 @@ for validation/build commands and the separate final-product control preference.
 Always supply exact REW measurement names when requesting captures from Ryan.
 
 Ryan authorizes local commits at applicable milestones. Keep unrelated edits out of commits and do not infer push authorization. After loading a test binary, sweep each knob and set its requested position before recording.
+
+When a measurement handoff is reached, always provide the next concrete steps and exact test names without waiting for Ryan to ask. Continue authorized steps autonomously; wait for confirmation of required physical wiring or pedal changes.
