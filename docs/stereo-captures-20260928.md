@@ -71,3 +71,18 @@ Next diagnostic: engage the current chorus with primary Mix swept to zero, leavi
 With the pedal engaged and primary Mix swept to zero, nominal -24 dBFS tone measured -25.0516/-25.0683 dBFS RMS L/R and 7.66511%/7.54271% harmonic ratios. This matches bypass closely; the wet chorus algorithm is not required for the observed distortion. `dry0-recheck-analysis.json` contains raw filenames and hashes.
 
 Retrospective REW API distortion inspection of the four saved `Endless mixTest I bypass R` and `dry0 R` takes found **3.01% THD at 1000 Hz in all four**, dominated by H3. Earlier gain/timing comparisons had not inspected this data. Thus distortion was already present in those REW measurements; a matching bypass/dry response did not establish a distortion-free path. `rew-prior-distortion.json` preserves UUIDs and exported 1 kHz rows. REW sweep and REAPER steady-tone values use different methods and possibly effective levels; their numerical difference is not yet explained.
+
+## Power-cycle persistence check
+
+User powered off, restarted holding only the left switch to select mono input, engaged the effect, and swept primary Mix to zero. At nominal -24 dBFS RMS, measured L/R RMS was -25.0508/-25.0679 dBFS and harmonic ratios 7.66245%/7.54021%, effectively unchanged from the preceding dry test. Reference remained -24.1748 dBFS. Results and hashes are in `afterRestart-analysis.json`. This restart did not remove the distortion; it does not prove whether firmware secondary values were retained or reset to equally distorting defaults.
+
+## Clear-effect reset and passthrough reload
+
+User performed the both-switch power-on clear-effect procedure, loaded the prior passthrough diagnostic and confirmed bypass, then engaged it for a second capture. The test was at the same nominal -24 dBFS RMS stimulus, with no requested secondary-control adjustment.
+
+| State | RMS L/R, dBFS | Harmonics L/R, percent |
+| --- | --- | --- |
+| Bypass after reset | -25.05075 / -25.06786 | 7.66165 / 7.53927 |
+| Engaged passthrough after reset | -25.05075 / -25.06789 | 7.66181 / 7.53941 |
+
+The simultaneous direct reference remained clean and stable. Raw filenames and hashes are preserved in the two `passthrough-afterReset-*-analysis.json` files and capture manifest beside the REAPER session. The reset/reload did not remove the distortion; bypass and no-op patch processing are effectively identical at this level. This substantially isolates the issue from chorus DSP but does not locate it within the shared firmware, analog stages or return connection. The procedure is not evidence that secondary gains were reset. Next proposed variable: explicitly set secondary Input to 25 percent while retaining the passthrough, Output and global Mix settings.
