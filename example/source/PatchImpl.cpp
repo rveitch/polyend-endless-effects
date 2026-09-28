@@ -150,7 +150,9 @@ class PatchImpl : public Patch
 
         for (size_t i = 0; i < audioBufferLeft.size(); ++i)
         {
-            float input = (audioBufferLeft[i] + audioBufferRight[i]) * 0.5f;
+            const float dryLeft = audioBufferLeft[i];
+            const float dryRight = audioBufferRight[i];
+            float input = (dryLeft + dryRight) * 0.5f;
             input += getNoise() * 0.00005f;
             input = m_inputLP.process(input);
 
@@ -197,8 +199,13 @@ class PatchImpl : public Patch
             wetL = wetMid + (wetL - wetMid) * stereoAmount;
             wetR = wetMid + (wetR - wetMid) * stereoAmount;
 
-            audioBufferLeft[i] = input * (1.0f - mix) + wetL * mix;
-            audioBufferRight[i] = input * (1.0f - mix) + wetR * mix;
+            // Keep the wet state running even in the dry dead zone.
+            // Leave original samples untouched there, including signed zero.
+            if (mix > 0.0f)
+            {
+                audioBufferLeft[i] = dryLeft * (1.0f - mix) + wetL * mix;
+                audioBufferRight[i] = dryRight * (1.0f - mix) + wetR * mix;
+            }
         }
     }
 
@@ -241,8 +248,11 @@ class PatchImpl : public Patch
 
     float getMix(float knob) const
     {
-        if (knob < 0.95f) return 0.5f;
-        return 0.5f + ((knob - 0.95f) / 0.05f) * 0.5f;
+        // Temporary diagnostic mapping, not the final Juno control design.
+        const float position = std::clamp(knob, 0.0f, 1.0f);
+        if (position <= 0.05f) return 0.0f;
+        if (position < 0.5f) return (position - 0.05f) * (0.5f / 0.45f);
+        return position;
     }
 
     float getToneCutoff(float knob) const

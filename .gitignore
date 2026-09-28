@@ -1,2 +1,5 @@
 
 build*/
+
+# macOS Finder metadata, at any depth
+.DS_Store

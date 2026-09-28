@@ -31,3 +31,12 @@ Use const and camelCase where appropriate; preserve SDK names and existing ABI c
 ## Pass-through diagnostic
 
 Branch `diagnostic/passthrough` adds `example/diagnostic/`; see its README for build and REW procedures. It reuses the SDK while excluding the chorus implementation. Use the dedicated Makefile and build directory. Preserve both audio channels exactly; hardware validation is separate from host sample-preservation tests.
+
+## Temporary chorus Mix mapping
+
+The 2026-09-28 test change preserves original stereo dry samples and maps 0-5%
+to true dry, noon to 50/50, and maximum to fully wet. See `example/tests/README.md`
+for validation/build commands and the separate final-product control preference.
+Always supply exact REW measurement names when requesting captures from Ryan.
+
+Ryan authorizes local commits at applicable milestones. Keep unrelated edits out of commits and do not infer push authorization. After loading a test binary, sweep each knob and set its requested position before recording.
