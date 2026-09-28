@@ -13,6 +13,8 @@ Research and local verification date: **2026-09-19**. This notebook records evid
 7. [Completion plan](completion-plan.md): staged deliverables and acceptance criteria.
 8. [Validation protocol](validation.md): objective DSP checks and controlled listening comparisons.
 
+9. [Stereo captures, 2026-09-28](stereo-captures-20260928.md): recorded mode comparisons and unresolved bypass headroom concern.
+
 ## Current assessment
 
 The project has a usable SDK and compiler. The baseline commit has two complete implementations in `PatchImpl.cpp` and fails to build. Branch `fix/chorus-build` removes the earlier duplicate; the later revision builds but remains a musical experiment with a dual-rate I+II mode, not a calibrated model of the measured Juno-60 both-button behavior.
