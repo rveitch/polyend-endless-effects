@@ -55,3 +55,25 @@ sweep supports an initialization/update explanation for the first captures;
 it does not prove universal firmware behavior. After loading a binary, sweep
 each knob and then set the requested position before recording. Preserve raw
 captures, zero timing offset, and no calibration or level normalization.
+
+## Right-channel verification (2026-09-28)
+
+User supplied `Endless mixTest I bypass R 48k take1/2.mdat` and
+`Endless mixTest I dry0 R 48k take1/2.mdat` after instructions to select input
+12, retaining stimulus output 11 and loopback reference 13/13. Channel attribution
+uses that user-reported setup; the API summary does not expose measurement input.
+The second engaged measurement's internal title starts with an extra `- `;
+classify by state/UUID rather than alphabetical index when comparing.
+
+Read through REW API with dBFS response, 96 points/octave and 1/48-octave smoothing.
+Mean engaged minus bypass near 1 kHz: -0.00005 dB. Maximum absolute mean
+response difference over 20 Hz to 20 kHz: 0.0325 dB. Repeat maxima were
+0.0606 dB bypass and 0.1082 dB engaged, both at 12 kHz. All four delay
+estimates round to 8.6509 ms relative to the reference, with no timing offset,
+IR shift, or calibration file. Reported SNR was 83.02 to 83.07 dB.
+
+Engaged right is approximately 0.0281 dB lower at 1 kHz than the earlier
+left knob-reset captures. This is a sequential whole-path comparison, not
+an isolated pedal channel-gain calibration. The data support dry/bypass
+agreement on both tested outputs in the mono-input setup. They do not yet
+verify stereo-input independence, the physical 5% threshold, or wet DSP.
