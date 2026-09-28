@@ -101,3 +101,15 @@ Ryan reports no audible distortion and prefers leaving pedal secondary Input/Out
 All eight pedal/reference WAVs were checked; no full-scale samples. References tracked the nominal send approximately 0.175 dB lower. Raw file hashes and metrics are in `passthrough-level-series-analysis.json`. These metrics are tone harmonic ratios, not audibility judgments or a declaration that the pedal is defective. Keep -48 dBFS RMS sine stimulus for controlled like-for-like comparisons with existing mode captures. This is not a prescribed musical operating level or evidence that the source of nonlinearity is fixed.
 
 Next characterization step: obtain a deterministic broadband passthrough/reference baseline, then use the identical stimulus with the chorus reloaded to examine frequency-dependent behavior. Match and document peak as well as RMS levels for that different stimulus; do not assume the same RMS alone gives equivalent input excursions.
+
+## Broadband passthrough baseline
+
+Two engaged passthrough takes captured with unchanged pedal settings. Deterministic Gaussian noise, seed 20260928, FFT band-limited to 20 Hz-20 kHz, 30 seconds with 20 ms fades and two seconds of silence each end. 48 kHz 24-bit PCM; peak -45.000 dBFS, steady RMS -59.256 dBFS, stimulus track at 0 dB. The different RMS is intentional to constrain peak excursion. `broadband-stimulus.json` stores generation details and SHA256.
+
+Named `Endless passthrough broadband peakMinus45 stereo 48k take1` and `take2`, each with simultaneous ADAT3 reference. Session positions 1000 and 1050 seconds. Analysis and hashes: `broadband-passthrough-analysis.json`; full frequency/complex transfer/coherence arrays in the four `broadband-passthrough-take*-channel*.npz` files beside the session.
+
+Cross-correlation gives 415 samples, or 8.6458 ms at integer-sample resolution, for both channels and takes relative to the direct reference. This agrees with earlier REW relative delay near 8.6509 ms within sample resolution; neither is absolute interface round-trip latency. Original recordings remain unshifted. Analysis only aligns by the measured integer delay.
+
+Welch H1 transfer used 65536-sample Hann windows, 50 percent overlap and raw seconds 3-31. Six 1/12-octave bands centered at 50, 100, 1000, 5000, 10000 and 18000 Hz repeat within 0.002 dB; all band coherences exceed 0.99999. At 1 kHz, L/R gains relative to ADAT3 are approximately +0.766/+0.732 dB. Different converter/cable paths are included; this is not isolated pedal gain. Raw return peaks are about -44.11/-44.14 dBFS.
+
+Next: reload the same chorus mix-test binary, sweep primary knobs, set I / fully wet / Tone50 / Width50 and capture the identical broadband signal. A modulated chorus is time-varying: reduced coherence and H1 attenuation can reflect modulation, so do not interpret its long-window H1 as an ordinary static EQ response. Preserve time-varying evidence and compare output power spectra as well.
