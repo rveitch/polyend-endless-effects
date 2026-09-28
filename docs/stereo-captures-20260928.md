@@ -86,3 +86,18 @@ User performed the both-switch power-on clear-effect procedure, loaded the prior
 | Engaged passthrough after reset | -25.05075 / -25.06789 | 7.66181 / 7.53941 |
 
 The simultaneous direct reference remained clean and stable. Raw filenames and hashes are preserved in the two `passthrough-afterReset-*-analysis.json` files and capture manifest beside the REAPER session. The reset/reload did not remove the distortion; bypass and no-op patch processing are effectively identical at this level. This substantially isolates the issue from chorus DSP but does not locate it within the shared firmware, analog stages or return connection. The procedure is not evidence that secondary gains were reset. Next proposed variable: explicitly set secondary Input to 25 percent while retaining the passthrough, Output and global Mix settings.
+
+## Passthrough send-level series and scope decision
+
+Ryan reports no audible distortion and prefers leaving pedal secondary Input/Output levels unchanged, reflecting normal usage. The proposed Input25 experiment was not performed. Only REAPER stimulus gain changed for this series, with passthrough engaged.
+
+| Nominal RMS send | Return RMS L/R, dBFS | Harmonics 2-20 L/R, percent |
+| --- | --- | --- |
+| -30 dBFS | -29.7790 / -29.8105 | 1.4574 / 1.4521 |
+| -36 dBFS | -35.5003 / -35.5327 | 0.35496 / 0.35393 |
+| -42 dBFS | -41.4315 / -41.4640 | 0.08805 / 0.08782 |
+| -48 dBFS | -47.4144 / -47.4470 | 0.02150 / 0.02141 |
+
+All eight pedal/reference WAVs were checked; no full-scale samples. References tracked the nominal send approximately 0.175 dB lower. Raw file hashes and metrics are in `passthrough-level-series-analysis.json`. These metrics are tone harmonic ratios, not audibility judgments or a declaration that the pedal is defective. Keep -48 dBFS RMS sine stimulus for controlled like-for-like comparisons with existing mode captures. This is not a prescribed musical operating level or evidence that the source of nonlinearity is fixed.
+
+Next characterization step: obtain a deterministic broadband passthrough/reference baseline, then use the identical stimulus with the chorus reloaded to examine frequency-dependent behavior. Match and document peak as well as RMS levels for that different stimulus; do not assume the same RMS alone gives equivalent input excursions.
