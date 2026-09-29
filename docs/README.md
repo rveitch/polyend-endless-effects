@@ -17,15 +17,19 @@ Research and local verification date: **2026-09-19**. This notebook records evid
 
 ## Latest capture and design milestones
 
+- [Implemented vintage candidate and pedal testing handoff](vintage-candidate-20260929.md)
+
 - [Mode I reference comparison](modeI-reference-comparison-20260929.md)
 - [Mode II and I+II reference comparison](other-modes-reference-comparison-20260929.md)
 - [DSP revision proposal, including vintage wet coloration](dsp-revision-proposal-20260929.md)
 
 ## Current assessment
 
-The project has a usable SDK and compiler. The baseline commit has two complete implementations in `PatchImpl.cpp` and fails to build. Branch `fix/chorus-build` removes the earlier duplicate; the later revision builds but remains a musical experiment with a dual-rate I+II mode, not a calibrated model of the measured Juno-60 both-button behavior.
-
-The recommended direction is a measured Juno-60 baseline, with any lush parallel I+II variant clearly treated as an extension. This is a recommendation awaiting Ryan's target preference, not a retroactive change to his requirements.
+The approved vintage candidate is implemented and host-tested on `fix/chorus-build`.
+It replaces the experimental dual-rate combined mode with fast common modulation
+and adds provisional vintage wet filtering. See the candidate handoff above for
+its exact build, validation limits and next hardware tests. The earlier audit
+records historical defects and is not a description of the current source.
 
 ## Evidence rules
 

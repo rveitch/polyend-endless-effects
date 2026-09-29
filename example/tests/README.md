@@ -77,3 +77,22 @@ left knob-reset captures. This is a sequential whole-path comparison, not
 an isolated pedal channel-gain calibration. The data support dry/bypass
 agreement on both tested outputs in the mono-input setup. They do not yet
 verify stereo-input independence, the physical 5% threshold, or wet DSP.
+
+## Vintage candidate regressions (2026-09-29)
+
+The earlier no-smoothing note applies to the original Mix change. The current
+candidate ramps mode weights and Tone coefficients, while Mix and Width remain
+immediate. See `../../docs/vintage-candidate-20260929.md` for current behavior,
+exact artifact and limits. From the repository root:
+
+```sh
+c++ -std=c++20 -O2 -Wall -Wextra -Werror -fsanitize=undefined example/tests/ChorusMixTest.cpp -o /tmp/endless-chorus-mix-test
+/tmp/endless-chorus-mix-test
+c++ -std=c++20 -O2 -Wall -Wextra -Werror -fsanitize=undefined example/tests/VintageCandidateTest.cpp -o /tmp/endless-vintage-test
+/tmp/endless-vintage-test
+```
+
+Both finite test programs pass. The candidate suite covers delay indexing,
+modulation geometry/rates, wet rolloff, near-full-scale transition stress,
+interrupted crossfades against continuous references, and callback partition
+independence. It does not substitute for pedal CPU and listening checks.

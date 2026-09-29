@@ -44,3 +44,11 @@ Ryan authorizes local commits at applicable milestones. Keep unrelated edits out
 When a measurement handoff is reached, always provide the next concrete steps and exact test names without waiting for Ryan to ask. Continue authorized steps autonomously; wait for confirmation of required physical wiring or pedal changes.
 
 For pedal capture work, Ryan prefers normal-use pedal Input/Output settings left unchanged. Do not request secondary-gain adjustments as a routine prerequisite. He reports the measured harmonics are not audible; distinguish measurements from demonstrated listening problems. Vary the interface/REAPER send for controlled characterization instead.
+
+## Vintage candidate (2026-09-29)
+
+The approved candidate now supersedes the experimental wet algorithm. Read
+`docs/vintage-candidate-20260929.md` for exact build identity, motion, filters,
+headroom allowance and next capture names. Both host tests and ARM build pass;
+hardware validation is pending. Preserve diagnostic Mix until those captures
+are complete. Do not describe the provisional wet EQ or gain as circuit-exact.

@@ -1,0 +1,113 @@
+# Vintage candidate implementation and pedal handoff
+
+Date: 2026-09-29. Branch: `fix/chorus-build`. Implements the approved
+[DSP proposal](dsp-revision-proposal-20260929.md). This is a test candidate,
+not a circuit-exact model or a hardware-validated release.
+
+## Build identity
+
+- Artifact: `example/build-vintage-candidate-final-20260929/juno_vintage_candidate_20260929_131540.endl`
+- SHA-256: `8283b522be060389e31964c6ba8a3b9d444967b7a22d6f9330d8d8ac64596fa4`
+- Source SHA-256 (`example/source/PatchImpl.cpp`): `ed8a6735daf91e8cafc8dc26e49eb052a478b9646f525580e9d5b57e279ff180`
+- ARM GCC 15.2.1, Cortex-M7 single-precision hard-float, SDK flags unchanged.
+- ELF size: text 11596, data 0, bss 5 bytes. This does not describe total firmware or externally provided working-buffer memory.
+- Existing binaries preserved. No pedal deployment or push performed.
+
+```sh
+make -C example TOOLCHAIN=/Users/ryanveitch/nodejs/polyend/agt15-2/bin/arm-none-eabi- BUILD_DIR=build-vintage-candidate-final-20260929 PATCH_NAME=juno_vintage_candidate all
+```
+
+Use a new build directory for subsequent source revisions. The SDK Makefile
+has incomplete header dependencies. This exact artifact is the handoff build;
+the earlier `build-vintage-candidate-20260929` directory is superseded.
+
+## Implemented behavior
+
+| Mode | Rate | Delay range | Stereo wet relationship |
+| --- | --- | --- | --- |
+| I, red | approximately 0.513 Hz | 1.66 to 5.35 ms | Opposing triangle modulation |
+| II, green | approximately 0.863 Hz | 1.66 to 5.35 ms | Opposing triangle modulation |
+| I+II, blue | approximately 9.75 Hz | 3.3 to 3.7 ms | Common sine modulation |
+
+The unsigned fixed-point phase clock produces actual rates 0.512994826,
+0.863000751 and 9.749997407 Hz at 48 kHz. All clocks, taps and filters keep
+running in every mode, including dry. Mode changes crossfade over 960 samples
+(20 ms), starting from current weights when interrupted. The delay reader's
+one-sample indexing error is corrected.
+
+Wet excitation is the average of the two inputs. Original independent stereo
+dry samples are preserved. The wet path uses second-order Butterworth
+low-pass filters before the delay at 8 kHz and after it at 4.5 kHz. Tone
+40 to 60% is neutral; its endpoints give postfilter cutoffs 3.6 and 5.4 kHz.
+Cutoff coefficient changes ramp over 20 ms. This is a provisional tonal match,
+not a claim about the original circuit's exact transfer function.
+
+Noise injection, arbitrary saturation and makeup gain are removed. Wet gain
+is 0.7 (approximately -3.1 dB), a deliberate deviation from unity starting
+gain to allow filter overshoot without clipping. This is a headroom budget,
+not an original-Juno gain measurement. Do not normalize away this difference
+in raw captures. Width runs from mono at minimum to nominal stereo at 40%
+and stays nominal above that point. It no longer boosts the side signal.
+
+Diagnostic Mix mapping remains: 0 to 5% exact dry, noon 50/50, maximum fully
+wet. Mix and Width changes are immediate; do not claim all controls are
+smoothed. Final mostly-static Mix controls remain deferred. Nonfinite knob
+updates are ignored and finite values are clamped. Footswitch actions and
+LED assignments are unchanged.
+
+## Verification
+
+Both host test programs pass with `-O2 -Wall -Wextra -Werror` and UBSan.
+
+- Existing Mix tests: exact dry, dead-zone boundaries, independent stereo
+  samples, continuous blend mapping, evolving wet state.
+- Candidate tests: integer/fractional delay impulses including ring wrap;
+  ten-second rate counts and delay extrema; opposing normal-mode and common
+  combined-mode relationships; silent input has no injected noise.
+- Mode fades agree with continuously running pure-mode renders, including
+  a fade interrupted after 300 of 960 samples and its final endpoint.
+- Results are bit-identical across 64- and 8-sample callbacks during repeated
+  mode and Tone changes, including changes before ramp completion.
+- Near-full-scale square-wave stress at 80, 320, 1000, 5000 and 18000 Hz with
+  changing mode, Tone and Width remains finite; observed peak 0.791726.
+- Neutral fully wet combined-mode sine RMS response relative to 1 kHz:
+  5 kHz -4.89 dB, 10 kHz -23.65 dB. Both meet the proposal's ranges.
+- Fixed-coefficient impulse absolute-sum estimate across the Tone range:
+  prefilter 1.13720, maximum postfilter 1.10956, product times wet gain
+  approximately 0.88326. This is not a bound for time-varying coefficients;
+  transition stress covers only the tested signals and changes.
+- ARM build passes. Existing SDK RWX LOAD-segment warning remains.
+  Final binary contains no matching ARM software-double helper symbols.
+
+ASan could not initialize on this host (sanitizer_malloc_mac.inc assertion),
+so no ASan coverage is claimed. The IDE connector did not expose Polyend;
+no CLion inspection result is claimed. Hardware CPU usage, clicks during
+physical controls, detailed phase/group-delay response and broadband
+modulation behavior remain pedal-validation tasks. Host tests establish
+candidate behavior, not authenticity or listening quality.
+
+## Next physical steps and capture names
+
+1. Load the exact artifact above.
+2. While engaged, sweep all three knobs once. Set Mix fully counterclockwise,
+   Tone and Width to noon; select Mode I (red). Then bypass the pedal.
+3. Keep established wiring and global Input/Output levels unchanged. Retain
+   the documented capture-session global Mix state; record any reset or
+   other change rather than silently treating earlier captures as comparable.
+4. Tell the capture operator the pedal is ready in bypass. Record the baseline,
+   then request engagement for true-dry comparison before fully wet testing.
+
+Use these exact names, appending `take2` in place of `take1` for repeats:
+
+- `Endless vintageCandidate I bypass broadband peakMinus45 stereo 48k take1`
+- `Endless vintageCandidate I dry0 tone50 width50 broadband peakMinus45 stereo 48k take1`
+- `Endless vintageCandidate I wet100 tone50 width50 broadband peakMinus45 stereo 48k take1`
+- `Endless vintageCandidate II wet100 tone50 width50 broadband peakMinus45 stereo 48k take1`
+- `Endless vintageCandidate IplusII wet100 tone50 width50 broadband peakMinus45 stereo 48k take1`
+
+These names specify the intended stimulus peak, not a measured return level.
+Verify the actual send before recording. Use the established simultaneous
+ADAT3 loopback timing reference and preserve raw timing and gain. Confirm
+required pedal states with Ryan before each capture. Start with bypass/dry
+agreement, then measure fully wet motion/coloration, followed by matched-level
+listening. Do not change global pedal gains to compensate for candidate wet gain.
