@@ -266,3 +266,38 @@ Next capture: `Endless vintageCandidate I mix50 tone50 width50 broadband peakMin
 After checking the blend, move to matched-level musical comparisons and
 physical mode/control transition listening without assuming objective metrics
 alone establish the final sound.
+
+## Mode I noon blend capture
+
+User confirmed red and noon. Other requested settings unchanged: Tone/Width
+noon, global Mix 100%, global Input/Output unchanged. Recorded the identical
+source at timeline 1950..1984, then stopped and saved. Evidence and raw file
+hashes: `vintageCandidate-I-mix50-analysis.json` beside the REAPER project.
+
+Dry contribution is estimated by projection onto each simultaneous reference
+delayed 415 samples, normalized by the corresponding bypass projection. The
+fully wet capture provides a small residual-correlation check; its L/R relative
+projections are -0.000428 / -0.000352. Free-running wet phases differ between
+captures, so this is an approximate blend estimate, not parameter telemetry.
+
+- Relative dry projection: 0.51500 / 0.51511 L/R; wet-residual-adjusted estimates
+  0.51521 / 0.51529, consistent with a near-half dry setting at physical noon.
+- Output RMS -64.03940 / -64.06745 dBFS; approximately -5.370 / -5.365 dB versus
+  bypass for this broadband stimulus. Reference RMS approximately -59.44868.
+- Peaks -50.27649 / -49.63675 dBFS; no full-scale samples.
+- L/R audio correlation 0.91365.
+
+No need to chase exact noon by repeated knob adjustments. The blended level
+reduction is a measured property of the diagnostic blend, wet filtering and
+0.7 wet gain, not evidence of recurrence of the minimum-Mix dry-path defect.
+Final-product balance and gain remain listening decisions. Do not assume the
+broadband level offset transfers unchanged to music or all modes.
+
+Next milestone: use the same dry musical source for pedal and plugin reference
+captures, retaining raw levels and making separate level-matched listening
+copies. User preference requested: their dry clip or a prepared synth phrase.
+Keep Mode I/red and all knobs unchanged until that source is selected. Planned
+first music test: `Endless vintageCandidate I mix50 tone50 width50 music stereo 48k take1`.
+Document the chosen source, playback level and timing reference before capture;
+follow with Modes II and I+II, then physical transition listening. No new
+hardware capture is authorized by an assumed knob or routing change.
