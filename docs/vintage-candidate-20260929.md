@@ -168,3 +168,37 @@ Release notes cover bridge reload/autostart and timing-signature fixes, but do
 not list the failed OnRecordButton helper as fixed. No update installed during
 these captures; native Record works. Initial migration requires bridge redeploy
 and manual script restart according to the release notes.
+
+## Mode I fully wet capture
+
+User's proceed response was interpreted as confirmation of the requested red
+Mode I, patch Mix fully clockwise, Tone/Width noon, global Mix 100%, and unchanged
+Input/Output. Capture at timeline 1800..1834 uses the same source and routing.
+Native Record action succeeded; transport stopped and project saved afterward.
+
+Evidence: `vintageCandidate-I-wet100-analysis.json` in the capture directory
+contains raw filenames, hashes, full delay trajectories and analysis method.
+Existing `Plugin References/analyzeModeI.py` readAudio, bandLevels and trajectory
+helpers were reused without running its top-level reference-analysis job.
+
+- Reference RMS: -59.44850 dBFS; pedal L/R RMS: -68.33882 / -68.34227 dBFS.
+- Peak L/R: -54.13834 / -54.05282 dBFS; no full-scale samples.
+- Fitted modulation fundamental: 0.51298 Hz on both channels.
+- L/R delay-trajectory correlation: -0.9999988, consistent with opposing motion.
+- Apparent wet delay after subtracting the bypass correlation estimate:
+  L 1.810..5.407 ms, R 1.754..5.354 ms. These estimates include wet filter
+  group delay and finite-window correlation bias; do not use their extrema
+  as exact delay-line bounds. Median local correlation is about 0.51 because
+  the wet signal is filtered and time-varying.
+- Bypass-corrected 1 kHz band gain: -3.132 / -3.117 dB L/R, consistent with
+  the provisional 0.7 wet gain.
+- Relative to 1 kHz, third-octave band levels: 5 kHz -4.930 / -4.908 dB;
+  10 kHz -22.987 / -22.973 dB. These support the proposed coloration range.
+  The 18 kHz band is approximately -55.5 dB relative to 1 kHz but is not
+  treated as a precise filter measurement at this low capture level.
+- Broadband L/R audio correlation: 0.00624.
+
+Measurements support intended Mode I motion and coloration, not authenticity,
+absence of every possible glitch, or final listening approval. Next: select
+Mode II/green while retaining both Mix controls fully wet and Tone/Width noon.
+Capture `Endless vintageCandidate II wet100 tone50 width50 broadband peakMinus45 stereo 48k take1`.
