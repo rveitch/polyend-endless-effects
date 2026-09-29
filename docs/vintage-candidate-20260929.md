@@ -335,3 +335,25 @@ Input/Output unchanged. Test name:
 `Endless vintageCandidate II mix50 tone50 width50 music stereo 48k take1`.
 Then obtain I+II music with the same settings and render the same dry source
 through the four plugin references. Plugin music comparisons remain pending.
+
+## Mode II musical capture
+
+User confirmed green Mode II; patch Mix/Tone/Width remain noon, global Mix
+100%, global Input/Output unchanged. Same synthPhrase_v1 source at timeline
+2050..2084, unity source/track gain. Recorded with native Record action, then
+stopped and saved. Both raw files contain 2032720 frames, including material
+outside the punch selection; original files retained.
+
+`Music Comparison/candidate-II-music-analysis.json` stores raw filenames and
+hashes, settings and preview identity. Raw peak -46.97813 dBFS, no full-scale
+samples and all samples finite. Reference active RMS -55.11615 dBFS agrees
+with the Mode I music reference. The 34-second stereo preview uses the same
+415-sample timing advance and -20 dBFS active stereo RMS target as Mode I,
+with +38.94619 dB gain and peak -8.03194 dBFS. No limiter or EQ; raw audio is
+unchanged. The quiet-send/noise and non-perceptual RMS matching limitations
+from Mode I still apply. Numerical checks do not establish listening quality.
+
+Next physical step: select I+II/blue while leaving every knob unchanged.
+Test: `Endless vintageCandidate IplusII mix50 tone50 width50 music stereo 48k take1`.
+After this capture, proceed to matching plugin music renders without requiring
+additional pedal changes unless a new hardware test is needed.
