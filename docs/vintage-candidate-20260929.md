@@ -111,3 +111,32 @@ ADAT3 loopback timing reference and preserve raw timing and gain. Confirm
 required pedal states with Ryan before each capture. Start with bypass/dry
 agreement, then measure fully wet motion/coloration, followed by matched-level
 listening. Do not change global pedal gains to compensate for candidate wet gain.
+
+## First candidate bypass capture
+
+User confirmed candidate loaded, knobs swept and bypass active, with global Mix
+still 100%. Reopened the saved hardware capture session and added the original
+34-second broadband stimulus at timeline position 1700, unity item/track gain.
+Saved routing: mono hardware outputs 11/13, stereo input 11/12 and mono reference
+13, monitoring and master sends off on the recording tracks. Existing takes
+were preserved. The MCP Record helper failed with `Unknown function:
+OnRecordButton`; native REAPER action 1013 started recording successfully.
+Transport was stopped and the project saved after capture.
+
+`vintageCandidate-bypass-analysis.json` in the capture directory records full
+paths, hashes and methods. Both raw recordings contain 2040784 frames at 48 kHz
+(longer than the 34-second punch selection; retain these originals). Analysis
+uses samples from 3 to 31 seconds, without gain or timing normalization.
+
+- Reference RMS: -59.44845 dBFS.
+- Pedal L/R RMS: -58.66971 / -58.70224 dBFS.
+- L/R peak: -44.10742 / -44.13554 dBFS; zero full-scale samples.
+- L/R relative correlation delay: approximately 415.01 samples, 8.646 ms.
+  This is a broadband correlation estimate, not an absolute interface delay
+  or a replacement for the earlier REW phase/timing estimate.
+- L/R correlation: 0.9999986, consistent with the bypassed mono-input setup.
+
+Next: user engages Mode I/red with patch Mix minimum, Tone/Width noon and global
+Mix unchanged. Capture the named dry0 take before drawing dry/bypass conclusions.
+User noted a new upstream MCP release; investigate after the matching dry take
+so bridge changes do not interrupt this comparison.
