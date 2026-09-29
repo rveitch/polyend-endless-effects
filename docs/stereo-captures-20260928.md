@@ -113,3 +113,11 @@ Cross-correlation gives 415 samples, or 8.6458 ms at integer-sample resolution, 
 Welch H1 transfer used 65536-sample Hann windows, 50 percent overlap and raw seconds 3-31. Six 1/12-octave bands centered at 50, 100, 1000, 5000, 10000 and 18000 Hz repeat within 0.002 dB; all band coherences exceed 0.99999. At 1 kHz, L/R gains relative to ADAT3 are approximately +0.766/+0.732 dB. Different converter/cable paths are included; this is not isolated pedal gain. Raw return peaks are about -44.11/-44.14 dBFS.
 
 Next: reload the same chorus mix-test binary, sweep primary knobs, set I / fully wet / Tone50 / Width50 and capture the identical broadband signal. A modulated chorus is time-varying: reduced coherence and H1 attenuation can reflect modulation, so do not interpret its long-window H1 as an ordinary static EQ response. Preserve time-varying evidence and compare output power spectra as well.
+
+## Mode I broadband captures, 2026-09-29
+
+User confirmed the same chorus mix-test build reloaded, engaged in I, primary Mix100/Tone50/Width50, secondary settings untouched. Two captures of the identical broadband stimulus at session positions 1100 and 1150 seconds. Results and raw file SHA256 hashes: `broadband-chorus-I-analysis.json` beside the session. Reference RMS -59.44855/-59.44858 dBFS matches the preceding-day baseline to within 0.001 dB. No full-scale samples in either stereo return.
+
+Return RMS is approximately -62.36 dBFS on both channels; L/R correlation 0.5912 and 0.5916. For 1/3-octave integrated output/reference power relative to corresponding passthrough baseline, 1 kHz is about -1.2 to -1.3 dB, 5 kHz -2.6 dB, 10 kHz -4.4 dB and 16 kHz -5.4 dB. At 100 Hz results span -4.93 to -5.50 dB across channels/takes. These are stationary-noise power comparisons including modulation and added noise, not an isolated filter response or perceived loudness rating. No absolute wet delay inferred.
+
+Next: identical two-take broadband captures for Mode II, changing only the mode; then I+II.
