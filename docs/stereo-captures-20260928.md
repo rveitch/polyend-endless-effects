@@ -157,3 +157,7 @@ Treat this as the first verified wet-only broadband Mode I capture. The previous
 ## Mode II with both mixes fully wet, 2026-09-29
 
 User confirmed green Mode II; global Mix and primary Mix remain fully wet, Tone/Width noon, Input/Output unchanged. Capture position 1550, full 34-second stereo and reference windows. `broadband-II-globalWet100-primaryWet100-analysis.json` contains filenames, hashes and methods. Dry projection coefficients -0.00078/-0.00115 L/R are consistent with approximately zero; output RMS -60.1485/-60.1433 dBFS, L/R correlation 0.01274. Stable reference -59.44869 dBFS and no full-scale samples. These results support wet-only Mode II capture, with estimation caveats unchanged. Next: I+II with both mixes fully wet, then primary noon verification.
+
+## I+II with both mixes fully wet, 2026-09-29
+
+User's proceed response was interpreted as confirming the requested blue I+II state; knobs unchanged. Position 1600, full 34-second capture and reference. `broadband-IplusII-globalWet100-primaryWet100-analysis.json` stores exact filenames, hashes and method. Dry projection -0.00371/-0.00104 L/R, near zero within correlated-wet projection limitations; output RMS -60.1603/-60.1575 dBFS; L/R correlation 0.02544. Stable reference -59.44869 dBFS and no full-scale samples. Wet-only broadband characterization now includes all three modes. Next physical step: Mode I red, primary Mix noon while global Mix remains fully wet; verify actual dry contribution before treating physical noon as precisely 50/50.
