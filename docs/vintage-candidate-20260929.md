@@ -398,3 +398,38 @@ No extra pedal changes required for listening. Do not claim these exports were
 auditorily approved or rank authenticity from numeric checks alone. Physical
 transition listening, higher-level headroom/CPU checks, and stereo-input tests
 remain outstanding before calling the effect finished.
+
+## Ryan's first listening feedback
+
+Reported after the musical comparison set, plus a separate guitar trial:
+
+- Modes I and II: Roland and Arturia preferred. Mode I references sounded
+  wetter than the candidate. AIR and TAL sounded comb-filter-like/phasey;
+  AIR II modulation sounded odd, TAL II ranked roughly third.
+- Guitar: candidate sounded good overall, but some volume loss versus fully
+  dry, especially in the low end. Guitar routing, knob/global state and
+  mono/stereo monitoring were not independently confirmed for this trial.
+- I+II: candidate and references generally vibrato-like. Roland smoothest.
+  TAL possibly preferred here but unlike the others and slower-sounding;
+  Arturia/AIR sounded fast. This is preference evidence, not a request to
+  replace the candidate's measured-style fast combined mode with TAL's design.
+
+Current implementation check: neutral nominal 50% Mix yields 0.5 dry plus
+0.35 filtered/delayed wet because the wet path has the provisional 0.7 gain.
+Measured physical noon has approximately 0.515 dry, so literal knob noon is
+not exact parameter 0.5. For equal in-phase low-frequency unit signals at
+nominal 0.5, gain would be 0.85 (-1.41 dB); actual delay/filter phase changes
+this with frequency/time. This calculation is not a prediction of the user's
+unmeasured guitar configuration. Wet low-pass filtering itself is not a bass
+cut; blend gain and interference must be separated from spectral coloration.
+
+Proposed next milestone: calibrate blend and output level while holding the
+current mode motion and vintage wet filter fixed. Compare a small set of
+separately labelled wet-balance/output-gain options before committing a DSP
+revision; retain raw gain comparisons as well as RMS-matched listening copies.
+Validate headroom for any gain increase. Do not compensate by changing global
+pedal gains, automatically boost bass EQ, or dismiss the drop as unavoidable
+chorus behavior. Favor Roland/Arturia as the I/II listening anchors. Keep fast
+I+II as the baseline while investigating Roland smoothness; a TAL-like slow
+combined option remains a distinct, unapproved extension. No DSP change or
+new binary is made in response to these notes.
