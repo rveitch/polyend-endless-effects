@@ -229,3 +229,40 @@ Next: select I+II/blue, retain patch/global Mix fully wet and Tone/Width noon.
 Capture `Endless vintageCandidate IplusII wet100 tone50 width50 broadband peakMinus45 stereo 48k take1`.
 For the fast mode, increase trajectory sampling frequency above the previous
 20 Hz and fit near 9.75 Hz; do not reuse the slow-mode frequency search.
+
+## I+II fully wet capture and first wet-mode milestone
+
+User confirmed blue I+II, keeping both Mix controls fully wet and Tone/Width
+noon. Recorded at timeline 1900..1934 using the same stimulus/routing, then
+stopped and saved. `vintageCandidate-IplusII-wet100-analysis.json` beside the
+session includes raw filenames/hashes and full delay trajectories.
+
+Analysis reuses the Mode I helper definitions with 512-sample correlation
+windows at 100 Hz and a 5..14 Hz fundamental search. This avoids the slow-mode
+20 Hz trajectory sampling limit. Sine center/depth estimated by least squares.
+
+- Fitted rate 9.74970 Hz on both channels; fitted depth +/-0.19735 ms.
+- Apparent center 3.5767 ms, extrema approximately 3.377..3.772 ms after
+  subtracting bypass delay. Includes wet-filter group delay and estimator
+  bias; do not interpret as a 0.077 ms delay-line programming error.
+- Sine-fit residual approximately 0.00503 ms; median local correlation 0.488.
+- Delay-trajectory L/R correlation 0.99999993 and audio correlation 0.99999167,
+  supporting the intended common wet modulation/output in this setup.
+- Bypass-corrected 1 kHz band gain -3.133 / -3.104 dB L/R.
+- Relative to 1 kHz, 5 kHz approximately -4.94 dB, 10 kHz -23.06 dB, both
+  channels. These agree closely with the other candidate modes.
+- Reference RMS -59.44848 dBFS; output RMS -68.34537 / -68.34903 dBFS.
+- Peaks -54.07792 / -54.08211 dBFS; no full-scale samples.
+
+The first candidate capture set now supports dry/bypass agreement, intended
+rates/stereo relationships for all three modes, and the proposed neutral wet
+coloration at this test level. It does not complete musical listening, CPU,
+physical transition, stereo-input or higher-level headroom validation.
+
+Next requested physical state: Mode I/red, patch Mix noon, Tone/Width noon,
+global Mix 100%, Input/Output unchanged. Confirm the actual LED because exiting
+combined mode may return to a base mode selected before the hold action.
+Next capture: `Endless vintageCandidate I mix50 tone50 width50 broadband peakMinus45 stereo 48k take1`.
+After checking the blend, move to matched-level musical comparisons and
+physical mode/control transition listening without assuming objective metrics
+alone establish the final sound.
