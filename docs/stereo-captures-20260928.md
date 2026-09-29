@@ -129,3 +129,11 @@ User confirmed green Mode II engaged, knobs unchanged from the Mode I wet100/Ton
 Return RMS approximately -62.35 to -62.36 dBFS; reference -59.44863 dBFS, stable against the baseline. L/R correlation 0.58952/0.58964 versus Mode I 0.59124/0.59164. Third-octave output/reference power relative to passthrough is approximately -1.3 dB at 1 kHz, -2.6 at 5 kHz, -4.4 at 10 kHz and -5.4 at 16 kHz, close to Mode I. At 100 Hz the four channel/take results range -3.37 to -3.67 dB, versus Mode I -4.93 to -5.50 dB. These are modulated broadband power comparisons, not static EQ or audibility conclusions.
 
 Next: I+II broadband takes at the same controls and stimulus.
+
+## I+II broadband captures, 2026-09-29
+
+User confirmed blue I+II engaged with controls unchanged. Identical broadband signal captured twice at positions 1300 and 1350 seconds; full 34-second windows present, no full-scale samples. Results and raw SHA256 hashes: `broadband-chorus-IplusII-analysis.json` beside the session. Reference RMS -59.44859 dBFS in both takes. Return RMS approximately -62.35 to -62.36 dBFS, L/R correlation 0.59634/0.59686.
+
+Third-octave output/reference power relative to passthrough is approximately -4.4 to -4.6 dB at 100 Hz, -1.35 to -1.49 at 1 kHz, -2.6 at 5 kHz, -4.4 at 10 kHz and -5.4 at 16 kHz. All three modes show similar overall broadband RMS and upper-band power at these settings. I+II remains stereo, consistent with the current combined modulation implementation rather than proof of authentic Juno both-button behavior.
+
+The fully wet broadband set is complete. Next proposed check: primary Mix at noon (nominal 50/50) in Mode I with Tone/Width unchanged, to characterize the intended dry/wet blend using the same stimulus. Do not change secondary controls.
