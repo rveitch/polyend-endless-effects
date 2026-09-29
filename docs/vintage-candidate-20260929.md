@@ -301,3 +301,37 @@ first music test: `Endless vintageCandidate I mix50 tone50 width50 music stereo 
 Document the chosen source, playback level and timing reference before capture;
 follow with Modes II and I+II, then physical transition listening. No new
 hardware capture is authorized by an assumed knob or routing change.
+
+## Musical comparison source and Mode I capture
+
+Ryan delegated source choice. Created an original deterministic mono additive
+synth phrase, 34 seconds at 48 kHz: silence 0..2, sustained chords 2..14,
+bass 14..22, plucked arpeggio 22..32, trailing silence to 34 seconds. Harmonics
+below 16 kHz; no chorus, detuning or reverb. Send peak remains -45 dBFS with
+unity item/track gain. `Music Comparison/createPhrase.py` and
+`Music Comparison/source-manifest.json` beside the capture session preserve
+the generator and source identity. Source SHA-256:
+`d8cd28fb6f859b4f8aaf6133eccb2050b6a559e6d6164dfcc53c441fb352a915`.
+
+Captured Mode I/red, patch Mix/Tone/Width noon, global Mix 100%, Input/Output
+unchanged, at timeline 2000..2034. Native Record succeeded; stopped and saved.
+`Music Comparison/candidate-I-music-analysis.json` contains raw filenames,
+hashes and preview processing. Raw pedal peak -47.22033 dBFS, no full-scale
+samples. Reference active RMS -55.11612 dBFS.
+
+Separate dry-reference and candidate previews use whole-stereo RMS normalization
+to -20 dBFS over 2..32 seconds (not LUFS/perceptual loudness matching). Common
+channel gain per file preserves stereo balance. Preview pedal timing shifted
+earlier by the established 415-sample bypass estimate, retaining wet modulation
+delay. Raw recordings untouched. Dry preview is captured ADAT3 reference,
+not a pedal-bypass music capture. Added preview gain: dry +35.11612 dB,
+candidate +39.03506 dB. Peaks -10.01254 / -8.18527 dBFS, no limiting or EQ.
+The low send and amplified preview can expose capture noise; do not use this
+first listening pair as a final noise-floor assessment or claim auditory review
+from numerical analysis alone.
+
+Next physical state: Mode II/green, patch Mix/Tone/Width noon, global Mix 100%,
+Input/Output unchanged. Test name:
+`Endless vintageCandidate II mix50 tone50 width50 music stereo 48k take1`.
+Then obtain I+II music with the same settings and render the same dry source
+through the four plugin references. Plugin music comparisons remain pending.
