@@ -121,3 +121,11 @@ User confirmed the same chorus mix-test build reloaded, engaged in I, primary Mi
 Return RMS is approximately -62.36 dBFS on both channels; L/R correlation 0.5912 and 0.5916. For 1/3-octave integrated output/reference power relative to corresponding passthrough baseline, 1 kHz is about -1.2 to -1.3 dB, 5 kHz -2.6 dB, 10 kHz -4.4 dB and 16 kHz -5.4 dB. At 100 Hz results span -4.93 to -5.50 dB across channels/takes. These are stationary-noise power comparisons including modulation and added noise, not an isolated filter response or perceived loudness rating. No absolute wet delay inferred.
 
 Next: identical two-take broadband captures for Mode II, changing only the mode; then I+II.
+
+## Mode II broadband captures, 2026-09-29
+
+User confirmed green Mode II engaged, knobs unchanged from the Mode I wet100/Tone50/Width50 test. Identical broadband signal captured twice at session positions 1200 and 1250. Full 34-second windows present on stereo returns and references; no full-scale return samples. See `broadband-chorus-II-analysis.json` beside the session for metrics, exact filenames and hashes.
+
+Return RMS approximately -62.35 to -62.36 dBFS; reference -59.44863 dBFS, stable against the baseline. L/R correlation 0.58952/0.58964 versus Mode I 0.59124/0.59164. Third-octave output/reference power relative to passthrough is approximately -1.3 dB at 1 kHz, -2.6 at 5 kHz, -4.4 at 10 kHz and -5.4 at 16 kHz, close to Mode I. At 100 Hz the four channel/take results range -3.37 to -3.67 dB, versus Mode I -4.93 to -5.50 dB. These are modulated broadband power comparisons, not static EQ or audibility conclusions.
+
+Next: I+II broadband takes at the same controls and stimulus.
