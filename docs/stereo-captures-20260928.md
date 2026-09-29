@@ -161,3 +161,9 @@ User confirmed green Mode II; global Mix and primary Mix remain fully wet, Tone/
 ## I+II with both mixes fully wet, 2026-09-29
 
 User's proceed response was interpreted as confirming the requested blue I+II state; knobs unchanged. Position 1600, full 34-second capture and reference. `broadband-IplusII-globalWet100-primaryWet100-analysis.json` stores exact filenames, hashes and method. Dry projection -0.00371/-0.00104 L/R, near zero within correlated-wet projection limitations; output RMS -60.1603/-60.1575 dBFS; L/R correlation 0.02544. Stable reference -59.44869 dBFS and no full-scale samples. Wet-only broadband characterization now includes all three modes. Next physical step: Mode I red, primary Mix noon while global Mix remains fully wet; verify actual dry contribution before treating physical noon as precisely 50/50.
+
+## Primary noon with global fully wet, 2026-09-29
+
+User confirmed red Mode I and primary Mix at noon, global Mix still fully wet, Tone/Width noon, secondary Input/Output unchanged. One broadband capture at position 1650. Output RMS -62.2465/-62.2586 dBFS L/R; reference -59.44866 dBFS; no full-scale samples. Approximate dry projection 0.53182 on both channels, L/R correlation 0.65283. Filenames, hashes and method: `broadband-I-globalWet100-primaryMix50-analysis.json`.
+
+This supports a near-half dry blend at physical noon once the global blend is removed, but is not a direct control readback or proof of exact 50/50 coefficients. Do not request repeated manual adjustments to chase the small difference. The previous global state, factory default and reset behavior remain unknown; current global Mix is deliberately fully wet. Capture setup and mix-path characterization are sufficient to move to comparison against reference implementations using the same stimulus, separating plugin references from hardware truth.
