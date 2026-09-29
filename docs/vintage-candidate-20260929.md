@@ -202,3 +202,30 @@ Measurements support intended Mode I motion and coloration, not authenticity,
 absence of every possible glitch, or final listening approval. Next: select
 Mode II/green while retaining both Mix controls fully wet and Tone/Width noon.
 Capture `Endless vintageCandidate II wet100 tone50 width50 broadband peakMinus45 stereo 48k take1`.
+
+## Mode II fully wet capture
+
+User confirmed green Mode II; all requested knob/global settings unchanged.
+Recorded at timeline 1850..1884 with native Record, then stopped and saved.
+`vintageCandidate-II-wet100-analysis.json` beside the session stores filenames,
+hashes and full trajectories. Same Mode I analysis helper definitions, with
+fundamental search expanded to 0.4..1.3 Hz to include Mode II.
+
+- Fitted rate: 0.862965 / 0.862963 Hz L/R, matching the 0.863 Hz candidate.
+- Delay-trajectory correlation: -0.9999909, opposing stereo modulation.
+- Apparent wet-delay extrema after bypass subtraction: approximately
+  1.769..5.392 ms L, 1.771..5.393 ms R. Filter delay and finite-window bias
+  remain included; these are not exact delay-line endpoints. Median local
+  correlations around 0.395 are affected by filtering and delay movement.
+- Bypass-corrected 1 kHz band gain: -3.144 / -3.102 dB L/R.
+- Relative to 1 kHz: 5 kHz -4.924 / -4.919 dB; 10 kHz -22.974 / -22.985 dB.
+  Coloration agrees closely with Mode I.
+- Reference RMS -59.44843 dBFS; output RMS -68.33877 / -68.34240 dBFS.
+- Peaks -54.09836 / -54.05595 dBFS; no full-scale samples.
+- Audio L/R correlation 0.01083. These results support intended Mode II
+  behavior at this test level, not a complete hardware performance approval.
+
+Next: select I+II/blue, retain patch/global Mix fully wet and Tone/Width noon.
+Capture `Endless vintageCandidate IplusII wet100 tone50 width50 broadband peakMinus45 stereo 48k take1`.
+For the fast mode, increase trajectory sampling frequency above the previous
+20 Hz and fit near 9.75 Hz; do not reuse the slow-mode frequency search.
