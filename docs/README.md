@@ -15,6 +15,12 @@ Research and local verification date: **2026-09-19**. This notebook records evid
 
 9. [Stereo captures, 2026-09-28](stereo-captures-20260928.md): recorded mode comparisons and unresolved bypass headroom concern.
 
+## Latest capture and design milestones
+
+- [Mode I reference comparison](modeI-reference-comparison-20260929.md)
+- [Mode II and I+II reference comparison](other-modes-reference-comparison-20260929.md)
+- [DSP revision proposal, including vintage wet coloration](dsp-revision-proposal-20260929.md)
+
 ## Current assessment
 
 The project has a usable SDK and compiler. The baseline commit has two complete implementations in `PatchImpl.cpp` and fails to build. Branch `fix/chorus-build` removes the earlier duplicate; the later revision builds but remains a musical experiment with a dual-rate I+II mode, not a calibrated model of the measured Juno-60 both-button behavior.
