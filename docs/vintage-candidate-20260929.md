@@ -357,3 +357,44 @@ Next physical step: select I+II/blue while leaving every knob unchanged.
 Test: `Endless vintageCandidate IplusII mix50 tone50 width50 music stereo 48k take1`.
 After this capture, proceed to matching plugin music renders without requiring
 additional pedal changes unless a new hardware test is needed.
+
+## Completed first musical comparison set
+
+User confirmed blue I+II; unchanged noon patch knobs, global Mix 100% and
+Input/Output. Recorded the synth phrase at timeline 2100..2134, stopped and
+saved. Raw peak -47.37239 dBFS, no full-scale samples, reference RMS -55.11614.
+`Music Comparison/candidate-IplusII-music-analysis.json` stores file hashes.
+Preview uses the same 415-sample advance and -20 dBFS stereo RMS target:
++38.53700 dB gain, peak -8.83539 dBFS. All three pedal previews now exist.
+
+Copied the saved plugin session to `Plugin References/Juno Chorus Music
+Comparisons.RPP`, preserving the original reference project. Added the identical
+source on all four tracks at 80..114 seconds. Media online; only the target
+track's master send enabled during each offline render. After rendering all
+sends disabled, transport stopped, session saved. No hardware sends in this
+reference project. All 12 plugin/music combinations rendered at Mix parameter
+0.5; mode parameters set and read back for each render. Roland/AIR noise off,
+Roland output 1, TAL volume .5/width 1/compatibility 0. Other controls inherited
+from the saved reference session. Versions remain those recorded in the plugin
+reference documentation; no plugin update performed.
+
+Within `Music Comparison/`:
+- `plugin-music-settings.json`: per-render control readbacks and output paths.
+- `plugin-music-render-analysis.json`: raw and preview hashes, peaks and gain.
+- `Listening Guide.md`: all 15 candidate/plugin listening links and dry reference.
+- `Mode I comparison.m3u`, `Mode II comparison.m3u`, `Mode IplusII comparison.m3u`:
+  playlists in candidate, Roland, AIR, Arturia, TAL order.
+
+All 12 raw plugin exports verified nonzero, finite, stereo, 48 kHz and exactly
+1632000 frames (34 seconds). No full-scale samples. Matching preview processing
+uses a common gain across both channels to -20 dBFS RMS over 2..32 seconds,
+without EQ/limiting or plugin timing shifts. All previews remain below full
+scale. Raw captures/exports retained. Control 0.5 is not a guarantee of equal
+internal dry/wet laws; RMS matching is not perceptual loudness matching.
+
+Next step is user listening, starting with Mode I against the four references,
+then II and combined, focusing on brightness, width, movement and transients.
+No extra pedal changes required for listening. Do not claim these exports were
+auditorily approved or rank authenticity from numeric checks alone. Physical
+transition listening, higher-level headroom/CPU checks, and stereo-input tests
+remain outstanding before calling the effect finished.
