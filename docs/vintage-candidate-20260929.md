@@ -140,3 +140,31 @@ Next: user engages Mode I/red with patch Mix minimum, Tone/Width noon and global
 Mix unchanged. Capture the named dry0 take before drawing dry/bypass conclusions.
 User noted a new upstream MCP release; investigate after the matching dry take
 so bridge changes do not interrupt this comparison.
+
+## Engaged dry comparison
+
+User confirmed Mode I/red engaged, with requested Mix minimum and other settings
+unchanged. Recorded the same source at timeline 1750..1784 using native Record
+action 1013. Transport stopped and session saved. Raw WAV paths/hashes and
+analysis are in `vintageCandidate-dry0-analysis.json` beside the REAPER project.
+
+- Dry RMS L/R: -58.66978 / -58.70231 dBFS.
+- Per-take reference-normalized level change versus bypass: -0.000024 /
+  -0.000032 dB L/R. Reference RMS remains approximately -59.44849 dBFS.
+- Relative correlation delay remains approximately 8.646 ms on both channels;
+  do not interpret sub-sample estimator differences as physical timing precision.
+- Maximum Welch power-ratio response difference from bypass, 40 Hz to 18 kHz:
+  0.00427 / 0.00442 dB L/R, using 16384-sample segments and raw 3..31 seconds.
+- No full-scale samples. This supports dry/bypass agreement at this signal
+  level with mono input; it does not establish stereo-input independence or
+  wet-mode behavior.
+
+Next requested state: engaged Mode I/red, patch Mix maximum, Tone/Width noon,
+global Mix 100%, global Input/Output unchanged. Use the wet100 name above.
+
+Checked upstream TwelveTake release v1.7.8, published 2026-09-29 11:30 UTC:
+https://github.com/TwelveTake-Studios/reaper-mcp/releases/tag/v1.7.8
+Release notes cover bridge reload/autostart and timing-signature fixes, but do
+not list the failed OnRecordButton helper as fixed. No update installed during
+these captures; native Record works. Initial migration requires bridge redeploy
+and manual script restart according to the release notes.
