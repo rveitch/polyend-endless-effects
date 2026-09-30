@@ -1,0 +1,2 @@
+# Preserve imported upstream bytes, including their existing trailing spaces.
+vendor/FxPatchSDK/** whitespace=-blank-at-eol

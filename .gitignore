@@ -3,3 +3,8 @@ build*/
 
 # macOS Finder metadata, at any depth
 .DS_Store
+
+# Keep build rules tracked despite the legacy build*/ ignore pattern.
+!buildSupport/
+!buildSupport/**
+__pycache__/
