@@ -25,3 +25,13 @@ Compare the dry preview, `I-mix50-current.wav` and `I-mix50-output-level-restore
 ## Approved live audition follow-up
 
 Ryan found the level-restored preview louder but needs a live test. He approved a desktop Output trim. The updated plugin is built, tested and installed; see `../desktop/README.md` for restart and +4.7 dB audition steps. No pedal DSP change was made. The default trim remains 0 dB, and legacy presets preserve the earlier sound. This makes gain independently adjustable for the live bypass comparison; it does not establish the final gain law or solve all possible phase/mono interactions.
+
+## Gain selection and headroom check
+
+Ryan auditioned all three modes with desktop Output trim +4.7 dB and reports the balance seemed good, while acknowledging psychoacoustic uncertainty. He selected **+4.7 dB across modes** as the gain target. This is listening approval of the level choice, not a claim of exact loudness matching on every source.
+
+A finite headroom probe uses the unchanged shared patch, then applies the selected gain algebraically. Duplicated mono 0.99-peak sines at 20, 80, 320, 1000 and 5000 Hz run for two seconds each, all three modes, default Tone/Width, Mix0.5 and Mix1.0. At noon Mix, maximum corrected peak is 1.44542 in I/II and 1.41512 in I+II. Fully wet maximum is 1.19051. The noon cases require about 3.29 dB input headroom for these tested signals. This is not a universal worst-case bound; transients and other controls need separate checks. Raw outputs, finite probe and source/compiler provenance are under ignored `build/gain-headroom-20260930/`.
+
+The selected trim therefore cannot be represented as clipping-safe for any normalized full-scale input. Preserve the listening-approved amount without silently adding a limiter, changing wet voicing or altering the fully dry Mix behavior. The installed audition plugin remains available at +4.7 dB; its default is still 0 dB and saved user settings persist. No new pedal binary or pedal deployment was made.
+
+Next live check: at the approved +4.7 dB, use the loudest normal guitar/synth material in each mode with Mix/Tone/Width noon, retaining track/master gains and pedal global gains. Inspect the plugin's output before track/master attenuation for peaks approaching or exceeding 0 dBFS. Record the source, settings and observed peak as `Juno gain47 modeI mix50 livePeak`, `Juno gain47 modeII mix50 livePeak`, and `Juno gain47 modeIplusII mix50 livePeak`. A lower post-plugin fader does not establish headroom inside the pedal. Physical TS/TRS routing testing stays deferred while the gain/headroom implementation is settled.
