@@ -74,5 +74,73 @@ class CaptureTests(unittest.TestCase):
             self.assertIn('metadata', result.stderr.lower())
 
 
+class ComparisonIntegrityTests(unittest.TestCase):
+    def fixture(self, folder):
+        from audio import writeWav
+        paths = [folder / 'a.wav', folder / 'b.wav']
+        for path in paths:
+            writeWav(path, array('f', [0.1, -0.1] * 64))
+        return paths
+
+    def testOutputCannotReplaceListeningWav(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            paths = self.fixture(folder)
+            preview = folder / 'preview'
+            for filename in ('a.listening.wav', 'transforms.json'):
+                with self.subTest(filename=filename):
+                    result = subprocess.run([sys.executable, str(ROOT / 'scripts/compare.py'), *map(str, paths),
+                                             '--preview-dir', str(preview), '--output', str(preview / filename)],
+                                            capture_output=True, text=True, timeout=20)
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertFalse(preview.exists())
+
+    def testMalformedSidecarIsRejected(self):
+        for metadata in [[], {'schemaVersion': 999, 'sampleRate': 48000, 'channels': 2, 'frames': 64},
+                         {'sampleRate': 48000, 'channels': 2, 'frames': 64, 'durationSeconds': 2},
+                         {'sampleRate': 48000, 'channels': 2, 'frames': 64, 'events': [{'frame': 65, 'action': 0}]}]:
+            with self.subTest(metadata=metadata), tempfile.TemporaryDirectory() as temporary:
+                paths = self.fixture(Path(temporary))
+                paths[0].with_suffix('.json').write_text(json.dumps(metadata))
+                result = subprocess.run([sys.executable, str(ROOT / 'scripts/compare.py'), *map(str, paths)],
+                                        capture_output=True, text=True, timeout=20)
+                self.assertNotEqual(result.returncode, 0)
+
+
+class HostDependencyTests(unittest.TestCase):
+    def testIncludedSharedDataIsCapturedAndListeningCopiesPreserveRaw(self):
+        from audio import readWav, writeWav
+        from capture import renderRaw
+        from project import hashFile
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            source = folder / 'PatchImpl.cpp'
+            header = folder / 'Gain.h'
+            data = folder / 'Gain.inc'
+            header.write_text('#include "Gain.inc"\n')
+            data.write_text('static constexpr float gain = 0.25f;\n')
+            source.write_text('#include "Gain.h"\n' + (ROOT / 'effects/passthrough/PatchImpl.cpp').read_text().replace(
+                '../../vendor/FxPatchSDK/source/Patch.h', str(ROOT / 'vendor/FxPatchSDK/source/Patch.h')).replace(
+                'void processAudio(std::span<float> /* left */, std::span<float> /* right */) override {}',
+                'void processAudio(std::span<float> left, std::span<float> right) override { for (float& v : left) v *= gain; for (float& v : right) v *= gain; }'))
+            samples = array('f', [0.25, -0.125] * 64)
+            raw = folder / 'raw.wav'
+            other = folder / 'other.wav'
+            build = renderRaw(source, samples, [None, None, None], [], 7, raw)
+            self.assertEqual(build['sourceHashes'][str(data.resolve())], hashFile(data))
+            self.assertEqual(build['sourceHashes'][str(header.resolve())], hashFile(header))
+            self.assertEqual(readWav(raw)[0], array('f', [value * 0.25 for value in samples]))
+            writeWav(other, samples)
+            before = hashFile(raw)
+            result = subprocess.run([sys.executable, str(ROOT / 'scripts/compare.py'), str(raw), str(other),
+                                     '--preview-dir', str(folder / 'preview'), '--shift-b', '3'],
+                                    capture_output=True, text=True, timeout=20)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(hashFile(raw), before)
+            self.assertAlmostEqual(json.loads(result.stdout)['difference']['left']['gainDb'], 12.041199826559248)
+            transform = json.loads((folder / 'preview/transforms.json').read_text())
+            self.assertEqual(transform['transformations'][1]['shiftFrames'], 3)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -9,6 +9,7 @@ from pathlib import Path
 import sys
 
 from audio import readWav, writeWav
+from capture import validateEvents
 from project import hashFile, writeJson
 
 
@@ -96,6 +97,25 @@ def captureInfo(path, sampleRate, channels, frames):
             metadata.get('channels') != channels or metadata.get('frames') != frames or
             metadata.get('captureHash', hashFile(path)) != hashFile(path)):
         raise ValueError('Capture metadata does not match WAV: ' + str(sidecar))
+    if 'schemaVersion' in metadata and (type(metadata['schemaVersion']) is not int or metadata['schemaVersion'] != 1):
+        raise ValueError('Unsupported capture metadata schema: ' + str(sidecar))
+    for field in ('sampleRate', 'channels', 'frames'):
+        if type(metadata[field]) is not int:
+            raise ValueError('Invalid integer capture metadata: ' + field)
+    if 'durationSeconds' in metadata:
+        duration = metadata['durationSeconds']
+        if (type(duration) not in (int, float) or not math.isfinite(duration) or
+                not math.isclose(duration, frames / sampleRate, rel_tol=1e-9, abs_tol=1e-9)):
+            raise ValueError('Capture metadata duration contradicts WAV')
+    if 'events' in metadata:
+        validateEvents(metadata['events'], frames)
+    if 'callbackSize' in metadata and (type(metadata['callbackSize']) is not int or not 1 <= metadata['callbackSize'] <= 65536):
+        raise ValueError('Invalid callback size in capture metadata')
+    if 'parameters' in metadata:
+        parameters = metadata['parameters']
+        if (not isinstance(parameters, list) or len(parameters) != 3 or
+                any(type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 1 for value in parameters)):
+            raise ValueError('Invalid normalized parameters in capture metadata')
     return {'path': str(path), 'hash': hashFile(path), 'metadata': metadata}
 
 
@@ -127,7 +147,11 @@ def main():
         b, rateB, channelsB = readWav(args.b)
         if channelsA != 2 or channelsB != 2 or rateA != rateB:
             raise ValueError('Compare requires stereo WAVs at the same sample rate; no implicit resampling')
-        if args.output and args.output.exists():
+        previewPaths = [args.preview_dir / name for name in ('a.listening.wav', 'b.listening.wav', 'transforms.json')] if args.preview_dir else []
+        destinations = [path.resolve() for path in previewPaths + ([args.output] if args.output else [])]
+        if len(destinations) != len(set(destinations)):
+            raise ValueError('Comparison destinations collide')
+        if any(path.exists() for path in destinations):
             raise ValueError('Comparison output already exists')
         provenance = [captureInfo(path.resolve(), rate, channels, len(samples) // 2)
                       for path, samples, rate, channels in [(args.a, a, rateA, channelsA), (args.b, b, rateB, channelsB)]]
@@ -136,9 +160,7 @@ def main():
         if args.preview_dir:
             if not math.isfinite(args.target_dbfs) or not -120 <= args.target_dbfs <= 0:
                 raise ValueError('Listening target must be finite in -120..0 dBFS')
-            paths = [args.preview_dir / name for name in ('a.listening.wav', 'b.listening.wav', 'transforms.json')]
-            if any(path.exists() for path in paths):
-                raise ValueError('Listening outputs already exist')
+            paths = previewPaths
             outputs = [listeningCopy(samples, shift, args.target_dbfs) for samples, shift in [(a, args.shift_a), (b, args.shift_b)]]
             for path, (samples, _) in zip(paths, outputs):
                 writeWav(path, samples, rateA)

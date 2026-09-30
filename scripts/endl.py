@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate the supported ARM32 PatchHeader against its pinned SDK contract."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -15,7 +16,9 @@ ENTRY_NAMES = ['init', 'agent_update_buffers', 'agent_set_buffer', 'agent_get_bu
                'agent_is_param_enabled', 'agent_get_param_name', 'agent_get_param_unit',
                'agent_set_param', 'agent_special_action', 'agent_get_state_idx']
 HEADER_FORMAT = '<IHH13I3I16I'
-HEADER_FIELDS = ['magic', 'abi_version', 'flags', *ENTRY_NAMES, 'image_size', 'bss_begin', 'bss_size', 'reserved']
+# Complete supported declarations, including types, typedefs and packing directives.
+# Comments and whitespace are excluded; any contract change requires review.
+SUPPORTED_CONTRACT_HASH = 'b06fe3c3daa218e5dd3e9958fcca3f550fb9ec49d6a276b8c5308e007578dbc0'
 
 
 def sdkContract(root):
@@ -23,11 +26,8 @@ def sdkContract(root):
     sdk = root / 'vendor/FxPatchSDK'
     header = (sdk / 'internal/PatchABI.h').read_text()
     noComments = re.sub(r'//[^\n]*|/\*.*?\*/', '', header, flags=re.S)
-    body = re.search(r'typedef struct PatchHeader\s*\{(.*?)\}\s*PatchHeader;', noComments, re.S)
-    declarations = body[1].split(';') if body else []
-    fields = [re.search(r'(\w+)\s*(?:\[16\])?\s*$', declaration.strip())[1]
-              for declaration in declarations if declaration.strip()]
-    if fields != HEADER_FIELDS or '#define PATCH_ABI_VERSION 0x000Bu' not in header:
+    contractHash = hashlib.sha256(re.sub(r'\s+', '', noComments).encode()).hexdigest()
+    if contractHash != SUPPORTED_CONTRACT_HASH:
         raise ValueError('Unsupported SDK header/ABI; review the artifact inspector before trusting new images')
     linker = (sdk / 'internal/patch_imx.ld').read_text()
     region = re.search(r'RAM\s*\(rxw\)\s*:\s*ORIGIN\s*=\s*_PATCH_BASE,\s*LENGTH\s*=\s*(\d+)(K?)', linker)

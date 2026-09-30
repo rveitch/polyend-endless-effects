@@ -49,7 +49,11 @@ class BuildTests(unittest.TestCase):
             fixture = root / 'effects/fixture'
             fixture.mkdir()
             source = fixture / 'PatchImpl.cpp'
-            source.write_text((root / 'effects/passthrough/PatchImpl.cpp').read_text())
+            shared = root / 'shared'
+            shared.mkdir()
+            (shared / 'Gain.h').write_text('#pragma once\n#include "Gain.inc"\n')
+            (shared / 'Gain.inc').write_text('static constexpr float fixtureGain = 1.0f;\n')
+            source.write_text('#include "../../shared/Gain.h"\n' + (root / 'effects/passthrough/PatchImpl.cpp').read_text())
             (fixture / 'README.md').write_text('Temporary third effect.\n')
             catalog['effects'].append({'id': 'fixture', 'name': 'Fixture', 'source': 'effects/fixture/PatchImpl.cpp',
                                        'documentation': 'effects/fixture/README.md', 'tests': []})
@@ -64,6 +68,8 @@ class BuildTests(unittest.TestCase):
             self.assertEqual(manifest['sdkCommit'], '708f08d7c8e365b8a153c66e0e5200fbdaff1ce0')
             self.assertIn('effects/fixture/PatchImpl.cpp', manifest['sourceHashes'])
             self.assertFalse(any('junoChorus/PatchImpl.cpp' in p for p in manifest['sourceHashes']))
+            self.assertIn('shared/Gain.h', manifest['sourceHashes'])
+            self.assertIn('shared/Gain.inc', manifest['sourceHashes'])
             effectObject = output / 'objects/fixture/effects/fixture/PatchImpl.o'
             initial = effectObject.stat().st_mtime_ns
             time.sleep(1.1)
@@ -77,6 +83,41 @@ class BuildTests(unittest.TestCase):
             result = self.command(*args, '--extra-flags=-DFIXTURE_REBUILD=1', root=root)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertGreater(effectObject.stat().st_mtime_ns, initial)
+            from hashlib import sha256
+            self.assertEqual(sha256(Path(manifest['elf']).read_bytes()).hexdigest(), manifest['elfHash'])
+
+    @unittest.skipUnless(Path(TOOLCHAIN + 'g++').exists() or shutil.which(TOOLCHAIN + 'g++'), 'ARM toolchain unavailable')
+    def testArtifactHistoryAndSameTimestampChanges(self):
+        from hashlib import sha256
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / 'repo'
+            root.mkdir()
+            for name in ['scripts', 'buildSupport', 'effects', 'vendor']:
+                shutil.copytree(ROOT / name, root / name)
+            shutil.copy2(ROOT / 'sdk.lock.json', root)
+            source = root / 'effects/passthrough/PatchImpl.cpp'
+            source.write_text('#include "Gain.h"\n' + source.read_text().replace(
+                'void processAudio(std::span<float> /* left */, std::span<float> /* right */) override {}',
+                'void processAudio(std::span<float> left, std::span<float> right) override { for (float& v : left) v *= gain; for (float& v : right) v *= gain; }'))
+            header = source.parent / 'Gain.h'
+            header.write_text('static constexpr float gain = 0.25f;\n')
+            args = ['build', '--effect', 'passthrough', '--toolchain', TOOLCHAIN]
+            first = self.command(*args, root=root)
+            self.assertEqual(first.returncode, 0, first.stderr)
+            output = root / 'build/passthrough'
+            manifest = json.loads(next(output.glob('*.manifest.json')).read_text())
+            effectObject = output / 'objects/passthrough/effects/passthrough/PatchImpl.o'
+            original = sha256(effectObject.read_bytes()).hexdigest()
+            header.write_text('static constexpr float gain = 0.75f;\n')
+            os.utime(header, ns=(effectObject.stat().st_mtime_ns, effectObject.stat().st_mtime_ns))
+            second = self.command(*args, root=root)
+            self.assertEqual(second.returncode, 0, second.stderr)
+            with self.subTest(check='contentInvalidation'):
+                self.assertNotEqual(original, sha256(effectObject.read_bytes()).hexdigest())
+            third = self.command(*args, '--extra-flags=-g0', root=root)
+            self.assertEqual(third.returncode, 0, third.stderr)
+            with self.subTest(check='immutableElf'):
+                self.assertEqual(sha256(Path(manifest['elf']).read_bytes()).hexdigest(), manifest['elfHash'])
 
     def testLegacyHostCommands(self):
         with tempfile.TemporaryDirectory() as temporary:

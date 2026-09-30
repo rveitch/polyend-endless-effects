@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import sys
 
-from project import ROOT, gitIdentity, hashFile, loadCatalog, run, sourceHashes, writeJson
+from project import ROOT, dependencyHashes, gitIdentity, hashFile, loadCatalog, run, writeJson
 
 
 def verifySdk():
@@ -30,27 +30,35 @@ def buildEffect(effect, args):
     config = {'toolchain': args.toolchain, 'compiler': compiler, 'extraFlags': args.extra_flags,
               'loadAddress': args.load_address, 'makefileHash': hashFile(ROOT / 'buildSupport/arm.mk'),
               'sdkCommit': lock['commit'], 'source': effect['source']}
-    if not configPath.exists() or json.loads(configPath.read_text()) != config:
-        # Old GNU Make has coarse timestamps. A changed configuration must not
-        # certify objects compiled with earlier flags, even within one second.
-        if configPath.parent.exists():
-            shutil.rmtree(configPath.parent)
-        writeJson(configPath, config)
     timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S_%f')
     artifact = output / (name + '_' + timestamp + '.endl')
     command = ['make', '-f', 'buildSupport/arm.mk', 'TOOLCHAIN=' + args.toolchain,
                'EFFECT_ID=' + effect['id'], 'PATCH_IMPL=' + effect['source'], 'BUILD_DIR=' + str(output),
                'PATCH_NAME=' + name, 'PATCH_BIN=' + str(artifact), 'PATCH_LOAD_ADDR=' + args.load_address,
                'CUSTOM_COMPILER_OPTIONS=' + args.extra_flags]
+    if not configPath.exists():
+        writeJson(configPath, {})
+    # Remove prior scans so changing the catalog source cannot retain obsolete dependencies.
+    for dependencyFile in configPath.parent.rglob('*.d'):
+        dependencyFile.unlink()
+    run([*command, 'dependencyScan'])
+    inputs = dependencyHashes(ROOT, configPath.parent.rglob('*.d'))
+    inputs['vendor/FxPatchSDK/internal/patch_imx.ld'] = hashFile(ROOT / 'vendor/FxPatchSDK/internal/patch_imx.ld')
+    config['inputHashes'] = inputs
+    if json.loads(configPath.read_text()) != config:
+        # Content identity also handles same-timestamp changes on older Make.
+        shutil.rmtree(configPath.parent)
+        writeJson(configPath, config)
     run(command)
     from endl import inspectImage
     inspection = inspectImage(artifact, ROOT, int(args.load_address, 0))
-    elf = output / (name + '.elf')
+    elf = artifact.with_suffix('.elf')
+    shutil.copy2(output / (name + '.elf'), elf)
     flags = run(['make', '-f', 'buildSupport/arm.mk', '-np', *command[3:]], capture=True).stdout
     flagLines = [line for line in flags.splitlines() if line.startswith(('CFLAGS :=', 'CXXFLAGS :=', 'LDFLAGS :='))]
     manifest = {'schemaVersion': 1, 'effectId': effect['id'], 'sdkCommit': lock['commit'],
                 'inspection': inspection, 'compiler': compiler, 'flags': flagLines, 'configuration': config,
-                'repository': gitIdentity(), 'sourceHashes': sourceHashes(ROOT, effect),
+                'repository': gitIdentity(), 'sourceHashes': inputs,
                 'artifact': str(artifact), 'artifactHash': hashFile(artifact),
                 'elf': str(elf), 'elfHash': hashFile(elf)}
     writeJson(artifact.with_suffix('.manifest.json'), manifest)

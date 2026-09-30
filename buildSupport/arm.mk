@@ -26,6 +26,15 @@ LIBS := -Wl,--start-group -lstdc++ -lc -lm -lgcc -Wl,--end-group
 PATCH_ELF := $(BUILD_DIR)/$(PATCH_NAME).elf
 CONFIG_FILE := $(OBJECT_DIR)/buildConfig.json
 all: $(PATCH_BIN)
+# Scan dependencies before deciding whether content changes require recompiling.
+# .scan targets deliberately produce .d files, never .scan files.
+dependencyScan: $(OBJ:.o=.scan)
+$(OBJECT_DIR)/%.scan: %.c
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) $(INCLUDES) -MM -MP -MT "$(patsubst %.scan,%.o,$@)" -MF "$(patsubst %.scan,%.d,$@)" $<
+$(OBJECT_DIR)/%.scan: %.cpp
+	@mkdir -p "$(dir $@)"
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -MM -MP -MT "$(patsubst %.scan,%.o,$@)" -MF "$(patsubst %.scan,%.d,$@)" $<
 $(OBJECT_DIR)/%.o: %.c $(CONFIG_FILE)
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) $(INCLUDES) -MMD -MP -c $< -o $@
@@ -37,5 +46,5 @@ $(PATCH_ELF): $(OBJ) $(SDK_DIR)/internal/patch_imx.ld $(CONFIG_FILE) FORCE
 $(PATCH_BIN): $(PATCH_ELF)
 	$(TOOLCHAIN)objcopy -O binary $< $@
 -include $(OBJ:.o=.d)
-.PHONY: all FORCE
+.PHONY: all dependencyScan FORCE
 FORCE:

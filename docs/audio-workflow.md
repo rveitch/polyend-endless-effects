@@ -28,7 +28,7 @@ Supply `--events events.json`. Actions 0/1 are official left press/hold IDs; the
 
 ## Measurements and listening copies
 
-Comparison rejects unequal frame counts, differing sample rates, non-stereo files and sidecars that contradict WAV dimensions or capture hashes. Physical recordings without sidecars are permitted and explicitly lack metadata.
+Comparison rejects unequal frame counts, differing sample rates, non-stereo files and sidecars with unsupported declared schema versions, contradictory WAV dimensions/hashes/durations, invalid parameters or out-of-range events. Compiler-generated dependencies identify shared headers and included data in capture provenance. Physical recordings without sidecars are permitted and explicitly lack metadata.
 
 Reports include raw left/right levels, peaks, finite sample counts, samples at or above full scale, differences, gain ratios and correlation. Full-scale counts are a headroom indicator, not proof that float samples were already clipped. Mono uses `(L + R) / 2`. Stereo correlation uses the normalized raw channel inner product; other correlation measurements subtract the mean. Silent/constant signals can yield an undefined centered correlation, represented by JSON null. Spectra use the first common power-of-two window, at most 32768 frames, with a Hann window. This is a localized comparison, not whole-recording spectral evidence or an authenticity score.
 

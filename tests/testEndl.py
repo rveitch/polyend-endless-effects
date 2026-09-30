@@ -39,5 +39,25 @@ class EndlTests(unittest.TestCase):
                 self.inspect(data)
 
 
+class ContractTests(unittest.TestCase):
+    def testChangedFieldWidthCannotReuseInspector(self):
+        import json
+        import shutil
+        from endl import inspectImage
+        from project import hashFile
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            shutil.copytree(ROOT / 'vendor', root / 'vendor')
+            lock = json.loads((ROOT / 'sdk.lock.json').read_text())
+            header = root / 'vendor/FxPatchSDK/internal/PatchABI.h'
+            header.write_text(header.read_text().replace('uint16_t flags;', 'uint32_t flags;'))
+            lock['files']['internal/PatchABI.h'] = hashFile(header)
+            (root / 'sdk.lock.json').write_text(json.dumps(lock))
+            image = root / 'fixture.endl'
+            image.write_bytes(EndlTests().fixture())
+            with self.assertRaisesRegex(ValueError, 'Unsupported'):
+                inspectImage(image, root)
+
+
 if __name__ == '__main__':
     unittest.main()

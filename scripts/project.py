@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import shlex
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -59,13 +60,6 @@ def loadEffect(root, effectId):
     return entries[effectId]
 
 
-def sourceHashes(root, effect):
-    files = set((root / 'vendor/FxPatchSDK').rglob('*'))
-    files.update((root / effect['source']).parent.rglob('*'))
-    return {str(p.relative_to(root)): hashFile(p) for p in sorted(files)
-            if p.is_file() and p.suffix in {'.cpp', '.c', '.h', '.hpp', '.ld'}}
-
-
 def gitIdentity(root=ROOT):
     try:
         revision = run(['git', 'rev-parse', 'HEAD'], root, True).stdout.strip()
@@ -73,3 +67,20 @@ def gitIdentity(root=ROOT):
         return {'revision': revision, 'dirty': dirty}
     except subprocess.CalledProcessError:
         return {'revision': None, 'dirty': True}
+
+
+def dependencyHashes(root, dependencyFiles):
+    """Read compiler-generated Make dependencies, including shared/data includes."""
+    files = set()
+    for dependencyFile in dependencyFiles:
+        text = dependencyFile.read_text().replace(chr(92) + chr(10), ' ')
+        declaration = text.splitlines()[0]
+        if ':' not in declaration:
+            raise ValueError('Invalid compiler dependency file: ' + str(dependencyFile))
+        for relative in shlex.split(declaration.split(':', 1)[1]):
+            path = Path(relative.replace('$$', '$'))
+            files.add(path.resolve() if path.is_absolute() else (root / path).resolve())
+    if not files:
+        raise ValueError('Compiler produced no source dependency identities')
+    return {str(path.relative_to(root)) if path.is_relative_to(root) else str(path): hashFile(path)
+            for path in sorted(files)}

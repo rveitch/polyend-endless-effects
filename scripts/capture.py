@@ -11,7 +11,7 @@ import sys
 import tempfile
 
 from audio import makeStimulus, readWav, writeWav
-from project import ROOT, gitIdentity, hashFile, loadEffect, run, sourceHashes, writeJson
+from project import ROOT, dependencyHashes, gitIdentity, hashFile, loadEffect, run, writeJson
 from sdk import verifySnapshot
 
 
@@ -40,7 +40,7 @@ def renderRaw(source, samples, parameters, events, blockSize, output, hostCxx='c
         flags = ['-std=c++20', '-O2', '-Wall', '-Wextra', '-Werror', '-fno-exceptions', '-fno-rtti']
         compiler = run([hostCxx, '--version'], capture=True).stdout.splitlines()[0]
         run([hostCxx, *flags, '-I', str(ROOT / 'vendor/FxPatchSDK/source'),
-             str(ROOT / 'tests/captureProbe.cpp'), str(source), '-o', str(binary)])
+             str(ROOT / 'tests/captureProbe.cpp'), str(source), '-MMD', '-MF', str(folder / 'effect.d'), '-o', str(binary)])
         inputPath = folder / 'input.f32'
         inputPath.write_bytes(samples.tobytes())
         eventPath = folder / 'events.txt'
@@ -53,7 +53,8 @@ def renderRaw(source, samples, parameters, events, blockSize, output, hostCxx='c
         processed = array('f')
         processed.frombytes(raw.read_bytes())
         writeWav(output, processed)
-        return {**details, 'compiler': compiler, 'flags': flags, 'probeHash': hashFile(ROOT / 'tests/captureProbe.cpp')}
+        return {**details, 'compiler': compiler, 'flags': flags, 'probeHash': hashFile(ROOT / 'tests/captureProbe.cpp'),
+                            'sourceHashes': dependencyHashes(ROOT, [folder / 'effect.d'])}
 
 
 def main():
@@ -111,7 +112,7 @@ def main():
                            'frames': frames, 'durationSeconds': frames / 48000, 'callbackSize': args.block_size,
                            'parameters': details['parameters'], 'events': events, 'stimulus': stimulus,
                            'inputCopy': str(inputCopy), 'inputHash': hashFile(inputCopy), 'captureHash': hashFile(output),
-                           'sdkCommit': lock['commit'], 'sourceHashes': sourceHashes(ROOT, effect),
+                           'sdkCommit': lock['commit'], 'sourceHashes': details['sourceHashes'],
                            'repository': gitIdentity(), 'hostBuild': details})
         print('Captured ' + str(output) + ' (' + str(frames) + ' stereo frames)')
         return 0

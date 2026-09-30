@@ -72,8 +72,8 @@
 
 **Interfaces:** executable documented root/compatibility commands and add-effect/update-SDK procedures; no desktop plugin installation.
 
-- [ ] Document corrected SDK boundaries, current candidate behavior, evidence limits, effect registration, manifests, captures, and SDK-update acceptance.
-- [ ] Check macOS desktop prerequisites and record wrapper constraints with pinned source links.
-- [ ] Run all host/tooling tests, both ARM builds, compatibility commands, structural checks, migration comparison and diff checks. Expected: PASS, with the existing RWX warning reported.
-- [ ] Request one independent whole-change review, fix material findings with regression tests, and repeat affected checks.
-- [ ] Commit final documentation/results and report actual local state and remaining device/desktop limits.
+- [x] Document corrected SDK boundaries, current candidate behavior, evidence limits, effect registration, manifests, captures, and SDK-update acceptance.
+- [x] Check macOS desktop prerequisites and record wrapper constraints with pinned source links.
+- [x] Run all host/tooling tests, both ARM builds, compatibility commands, structural checks, migration comparison and diff checks. Expected: PASS, with the existing RWX warning reported.
+- [x] Request one independent whole-change review, fix material findings with regression tests, and repeat affected checks.
+- [x] Commit final documentation/results and report actual local state and remaining device/desktop limits.

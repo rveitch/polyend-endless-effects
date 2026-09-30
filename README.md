@@ -14,7 +14,7 @@ make build EFFECT=all TOOLCHAIN=/Users/ryanveitch/nodejs/polyend/agt15-2/bin/arm
 make check EFFECT=all
 ```
 
-Use your own compiler prefix on other machines. Device outputs go to ignored `build/<effectId>/`: timestamped `.endl` files, ELF files and `.manifest.json` provenance. Builds inspect the image header, callback addresses and RAM bounds before reporting success. Host tests and structural checks do not establish pedal CPU performance or hardware authenticity.
+Use your own compiler prefix on other machines. Device outputs go to ignored `build/<effectId>/`: timestamped `.endl` files with preserved matching ELFs and `.manifest.json` provenance. Dependency-content hashes prevent stale builds even when file timestamps are unchanged. Builds inspect the image header, callback addresses and RAM bounds before reporting success. Host tests and structural checks do not establish pedal CPU performance or hardware authenticity.
 
 ```sh
 make build EFFECT=junoChorus PATCH_NAME=juno_chorus TOOLCHAIN=/path/to/bin/arm-none-eabi-

@@ -11,7 +11,7 @@ python3 scripts/sdk.py check --ref master
 
 The check stages the requested official ref in ignored temporary build storage, compares file hashes and removes the staging directory. It leaves the committed snapshot and lock unchanged. Use the reported full commit for the later import so a moving branch cannot change the reviewed revision.
 
-Review public `source/Patch.h`, ABI definitions, wrapper, entrypoint, linker, upstream Makefile and license changes. Our build engine intentionally does not execute the upstream Makefile, so upstream compile/link changes need deliberate reconciliation in `buildSupport/arm.mk`. An ABI change raises a compatibility warning. The inspector refuses unsupported formats, even if the new upstream code builds.
+Review public `source/Patch.h`, ABI definitions, wrapper, entrypoint, linker, upstream Makefile and license changes. Our build engine intentionally does not execute the upstream Makefile, so upstream compile/link changes need deliberate reconciliation in `buildSupport/arm.mk`. An ABI change raises a compatibility warning. The inspector checks the complete normalized supported ABI declaration contract, including field types and packing. It refuses unfamiliar contracts, even if the new upstream code builds; harmless comments and whitespace are excluded.
 
 As checked on 2026-09-30, official `master` still resolves to `708f08d7c8e365b8a153c66e0e5200fbdaff1ce0`, the imported revision (ABI 11).
 

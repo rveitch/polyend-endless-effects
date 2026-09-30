@@ -5,8 +5,8 @@ Read `docs/README.md`, `docs/code-audit.md`, and `docs/completion-plan.md` befor
 ## Ownership and current state
 
 - This Git repository owns independent effects under `effects/`, registered in `effects/catalog.json`. The official SDK is pinned unchanged in `vendor/FxPatchSDK/` with `sdk.lock.json`. The sibling `../FxPatchSDK/` is reference only. `example/` contains compatibility shims and preserved saved artifacts.
-- At baseline commit `bc31ea43a596f6f19fcffdaf1db41efd5614376e`, `example/source/PatchImpl.cpp` contained two complete definitions. Branch `fix/chorus-build` removes the earlier duplicate and retains the later DSP revision; the ARM target build passes, but the DSP audit remains open.
-- The later block is an experimental revision, not a verified hardware model. See the audit before choosing which behavior to retain.
+- Baseline `bc31ea43a596f6f19fcffdaf1db41efd5614376e` had duplicated definitions. That failure and the later experimental revision are historical audit evidence.
+- The active implementation is the approved 2026-09-29 vintage candidate, preserved during multi-effect migration. ARM and host tests pass; wet voicing, authenticity and pedal CPU validation remain provisional. Read `docs/vintage-candidate-20260929.md`.
 - Do not overwrite working-tree changes, update the upstream SDK, or deploy a pedal without task authorization. Check status before editing. Keep the shared ChatGPT `sources/` mirror read-only.
 
 ## Build and validation
@@ -15,7 +15,7 @@ Read `docs/README.md`, `docs/code-audit.md`, and `docs/completion-plan.md` befor
 - Local build: `make build EFFECT=all TOOLCHAIN=/Users/ryanveitch/nodejs/polyend/agt15-2/bin/arm-none-eabi-`. Host: `make test EFFECT=all`; tooling: `make test-tools`; artifacts: `make check EFFECT=all`. Legacy example commands still delegate.
 - Compiler warnings are errors. Run the target build after code changes. Host DSP tests complement but do not replace device listening and CPU validation.
 - Use a separate `BUILD_DIR` or a temporary directory for investigative builds. Never remove saved binaries during an audit.
-- ARM rules generate header dependencies and invalidate objects on changed build settings. Snapshot edits must go through the explicit SDK update workflow; run builds and SDK updates sequentially. Manifests record source/SDK/compiler/flags and dirty identity.
+- ARM rules generate header dependencies and invalidate objects on changed dependency contents or build settings. Snapshot edits must go through the explicit SDK update workflow; run builds and SDK updates sequentially. Manifests record source/SDK/compiler/flags and dirty identity.
 - Run finite test programs that exit. No persistent audio loops in diagnostics.
 
 ## Evidence and behavior
