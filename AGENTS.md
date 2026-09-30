@@ -56,3 +56,5 @@ are complete. Do not describe the provisional wet EQ or gain as circuit-exact.
 ## Multi-effect and SDK maintenance (2026-09-30)
 
 Read `docs/effect-authoring.md`, `docs/sdk-maintenance.md` and `docs/audio-workflow.md` before adding effects or updating the SDK. Check upstream through `scripts/sdk.py check`; explicit reviewed imports use `update --ref <fullCommit> --apply`. Keep fork-only APIs out of the official contract. Use templates under `docs/templates/` for decision and hardware evidence records. Capture both channels and retain raw gain/timing. The relocation preserves Juno samples; it does not resolve outstanding pedal validation. Desktop audition remains evaluated only, with no wrapper installed.
+
+Desktop prerequisites were installed on 2026-09-30: CMake 4.4.3 and a local JUCE 8.0.4 checkout under ignored `build/desktop/dependencies/JUCE/`. `desktop.lock.json` pins its full commit. Read the dependency setup section in `docs/desktop-audition-evaluation.md`; wrapper adaptation and REAPER loading remain outstanding.

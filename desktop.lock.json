@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "cmake": {
+    "minimumVersion": "3.22"
+  },
+  "juce": {
+    "repository": "https://github.com/juce-framework/JUCE.git",
+    "version": "8.0.4",
+    "commit": "51d11a2be6d5c97ccf12b4e5e827006e19f0555a",
+    "localSource": "build/desktop/dependencies/JUCE"
+  }
+}
