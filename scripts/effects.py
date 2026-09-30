@@ -14,12 +14,8 @@ from project import ROOT, gitIdentity, hashFile, loadCatalog, run, sourceHashes,
 
 
 def verifySdk():
-    lock = json.loads((ROOT / 'sdk.lock.json').read_text())
-    vendor = ROOT / 'vendor/FxPatchSDK'
-    actual = {str(p.relative_to(vendor)): hashFile(p) for p in vendor.rglob('*') if p.is_file()}
-    if actual != lock['files']:
-        raise ValueError('SDK snapshot differs from sdk.lock.json; review local changes before building')
-    return lock
+    from sdk import verifySnapshot
+    return verifySnapshot(ROOT)
 
 
 def buildEffect(effect, args):
@@ -47,11 +43,13 @@ def buildEffect(effect, args):
                'PATCH_NAME=' + name, 'PATCH_BIN=' + str(artifact), 'PATCH_LOAD_ADDR=' + args.load_address,
                'CUSTOM_COMPILER_OPTIONS=' + args.extra_flags]
     run(command)
+    from endl import inspectImage
+    inspection = inspectImage(artifact, ROOT, int(args.load_address, 0))
     elf = output / (name + '.elf')
     flags = run(['make', '-f', 'buildSupport/arm.mk', '-np', *command[3:]], capture=True).stdout
     flagLines = [line for line in flags.splitlines() if line.startswith(('CFLAGS :=', 'CXXFLAGS :=', 'LDFLAGS :='))]
     manifest = {'schemaVersion': 1, 'effectId': effect['id'], 'sdkCommit': lock['commit'],
-                'compiler': compiler, 'flags': flagLines, 'configuration': config,
+                'inspection': inspection, 'compiler': compiler, 'flags': flagLines, 'configuration': config,
                 'repository': gitIdentity(), 'sourceHashes': sourceHashes(ROOT, effect),
                 'artifact': str(artifact), 'artifactHash': hashFile(artifact),
                 'elf': str(elf), 'elfHash': hashFile(elf)}
