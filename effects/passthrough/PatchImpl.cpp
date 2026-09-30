@@ -22,10 +22,25 @@ class Passthrough final : public Patch
     Color getStateLedColor() override { return Color::kDimWhite; }
 };
 
+#if !defined(ENDLESS_DESKTOP)
 Passthrough patch;
+#endif
 }
 
+#if defined(ENDLESS_DESKTOP)
+#include "../../desktop/PatchFactory.h"
+static void destroyDesktopPatch(Patch* instance)
+{
+    delete static_cast<Passthrough*>(instance);
+}
+endlessDesktop::PatchHandle endlessDesktop::createPatch()
+{
+    return PatchHandle{new Passthrough{}, PatchDeleter{destroyDesktopPatch}};
+}
+#else
 Patch* Patch::getInstance()
 {
     return &patch;
 }
+
+#endif

@@ -1,6 +1,6 @@
 # Desktop audition evaluation, 2026-09-30
 
-The fork's desktop wrapper is useful reference material for a future audition tool. It was evaluated, not imported, built or installed. Current finite stereo captures already provide reproducible offline audition files.
+The fork's desktop wrapper was evaluated as architectural reference, not imported. A project-owned wrapper is now built and installed; see [desktop build and REAPER setup](../desktop/README.md). Current finite stereo captures already provide reproducible offline audition files.
 
 Reviewed fork commit: `29761ec0ca83a1f68a6b1d04376ff99db36b0f77`.
 
@@ -16,9 +16,9 @@ JUCE 8.0.4 has its own [AGPL/commercial licensing terms](https://github.com/juce
 
 ## Local prerequisites and next implementation boundary
 
-Apple's command-line tools and C++20 compiler are present (`/Library/Developer/CommandLineTools`). CMake was absent from PATH at evaluation time. The dependency setup below was subsequently requested and completed. The effect wrapper build and REAPER loading remain unverified.
+Apple's command-line tools and C++20 compiler are present (`/Library/Developer/CommandLineTools`). CMake was absent from PATH at evaluation time. The dependency setup below was subsequently requested and completed. The project-owned wrapper subsequently built and loaded in REAPER 7.80.
 
-A later implementation should select one catalog effect, enforce stereo 48 kHz, allocate working memory before processing, queue UI actions onto the audio thread, and test parameter resets and transitions. Include an explicit desktop bypass separate from patch actions, unique plugin identities per effect and robust multiple-instance handling. Compare desktop renders against finite captures before device listening. Desktop and device artifacts should have distinct output/provenance records.
+The project-owned implementation selects one catalog effect, enforces stereo 48 kHz, allocates working memory before processing and applies mode parameter changes on the audio thread. It includes desktop bypass, unique plugin identities and independent instances. Native tests compare against direct effect processing. Desktop and device artifacts have separate output and provenance records.
 
 ## Dependency setup completed, 2026-09-30
 
@@ -35,7 +35,7 @@ git clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git bu
 git -C build/desktop/dependencies/JUCE rev-parse HEAD
 ```
 
-The final command must report the full commit above. Avoid cloning into an existing dependency folder. No REAPER plugin has been built or installed. The next step is adapting the desktop wrapper to the effect catalog and official SDK paths, including state isolation and stereo 48 kHz processing.
+The final command must report the full commit above. Avoid cloning into an existing dependency folder. The implementation now selects the effect catalog and official SDK paths, with instance isolation and stereo 48 kHz processing.
 
 The native Apple Silicon prerequisite check also passed:
 

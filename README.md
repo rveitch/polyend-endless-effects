@@ -29,7 +29,8 @@ Old `make -C example` and `make -C example -f diagnostic/Makefile` commands stil
 - [SDK maintenance](docs/sdk-maintenance.md): check upstream, review changes, explicitly import, then rebuild and compare.
 - [Stereo captures and comparison](docs/audio-workflow.md): reproducible float WAVs, sample-scheduled controls and raw L/R/mono measurements.
 - [Migration evidence](docs/repository-migration-20260930.md): preserved behavior and verification limits.
-- [Desktop audition evaluation](docs/desktop-audition-evaluation.md): experimental wrapper assessment and macOS prerequisites.
+- [Desktop VST3 build](desktop/README.md): pinned JUCE build, controls and verified REAPER setup.
+- [Desktop audition evaluation](docs/desktop-audition-evaluation.md): fork assessment and macOS prerequisites.
 - [Project notebook](docs/README.md): Juno research, dated measurements and current candidate handoff.
 
 `vendor/FxPatchSDK/` is an unchanged official snapshot. `sdk.lock.json` records its full upstream commit and file hashes. Project build rules belong in `buildSupport/`; effects are selected through `effects/catalog.json`. Do not modify the vendor snapshot to add effects.

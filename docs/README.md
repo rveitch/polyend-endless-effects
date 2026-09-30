@@ -21,6 +21,7 @@ Research and local verification date: **2026-09-19**. This notebook records evid
 - [SDK maintenance](sdk-maintenance.md)
 - [Stereo capture and comparison](audio-workflow.md)
 - [Migration verification](repository-migration-20260930.md)
+- [Desktop VST3 build and REAPER setup](../desktop/README.md)
 - [Desktop audition evaluation](desktop-audition-evaluation.md)
 
 ## Latest capture and design milestones

@@ -1,0 +1,6 @@
+#pragma once
+namespace endlessDesktop
+{
+inline constexpr const char* effectName = "@PRODUCT_NAME@";
+inline constexpr const char* parameterNames[3] = {"@PARAM0@", "@PARAM1@", "@PARAM2@"};
+}

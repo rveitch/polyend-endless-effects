@@ -134,7 +134,7 @@ class ChorusMotion
     uint32_t m_phase[3]{};
 };
 
-class PatchImpl : public Patch
+class PatchImpl final : public Patch
 {
   public:
     void init() override
@@ -290,9 +290,23 @@ class PatchImpl : public Patch
     VintageLowPass m_filterR[3];
 };
 
+#if !defined(ENDLESS_DESKTOP)
 static PatchImpl patch;
+#endif
 
+#if defined(ENDLESS_DESKTOP)
+#include "../../desktop/PatchFactory.h"
+static void destroyDesktopPatch(Patch* instance)
+{
+    delete static_cast<PatchImpl*>(instance);
+}
+endlessDesktop::PatchHandle endlessDesktop::createPatch()
+{
+    return PatchHandle{new PatchImpl{}, PatchDeleter{destroyDesktopPatch}};
+}
+#else
 Patch* Patch::getInstance()
 {
     return &patch;
 }
+#endif

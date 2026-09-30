@@ -15,7 +15,16 @@
           "source": "effects/junoChorus/tests/VintageCandidateTest.cpp",
           "linkEffect": false
         }
-      ]
+      ],
+      "desktop": {
+        "pluginCode": "JnCh",
+        "productName": "Endless_JunoChorus",
+        "parameterNames": [
+          "Mix",
+          "Tone",
+          "Width"
+        ]
+      }
     },
     {
       "id": "passthrough",
@@ -27,7 +36,16 @@
           "source": "effects/passthrough/tests/PassthroughTest.cpp",
           "linkEffect": true
         }
-      ]
+      ],
+      "desktop": {
+        "pluginCode": "UnPs",
+        "productName": "Endless_Passthrough",
+        "parameterNames": [
+          "Left",
+          "Middle",
+          "Right"
+        ]
+      }
     }
   ]
 }
