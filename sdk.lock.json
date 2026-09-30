@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/polyend/FxPatchSDK.git",
+  "commit": "708f08d7c8e365b8a153c66e0e5200fbdaff1ce0",
+  "files": {
+    ".clang-format": "5e6f614c18a65d0958a6919bc706225f04e586d06908ab9fdf302c6521d5a530",
+    ".gitignore": "ab7b0e3a7ee7be4fc7a7b995084ccb97521d4192b9137302b1c7b68ced71d480",
+    ".vscode/settings.json": "81f4a586e6bb14c0e6a300b4bd7005682c8eb4fea4c10e665ff424bbc9e4e065",
+    ".vscode/tasks.json": "b31a224fa313d5a455d512cb4be8e9ae25145c985a58f298896a1e99461a6f8a",
+    "LICENSE.TXT": "5e22749e2c713b21d5942272b4d1e13ec135a183a6eeac0e4224a8b73124908c",
+    "Makefile": "33b0b581c1510e4fd9764dc2a873e3e1d5aec4ad5ff81b0bbee031176ec48371",
+    "README.md": "a4dc1b49666b3b0e0d4787e4abe9e0c801d57cbf1f3eba6b1c8db75cdbd79f03",
+    "internal/PatchABI.h": "be47398163412b6287fbdca3c89a608c3eddcc6e2581dfe7d13ecb39a0b06637",
+    "internal/PatchCppWrapper.cpp": "802e94fce7b1a61a3709226684001b622339e44d14e16d86ce7c62aee061df90",
+    "internal/PatchCppWrapper.h": "51538f6393e2c576984e16caf20a3cf819d030e3fd22314780cf4c39bdc2e258",
+    "internal/patch_imx.ld": "70aa398ffdaf05363eed19b5be393311b40b05f4dc1967150523fec473bac020",
+    "internal/patch_main.c": "e19884991497d5a665b50dc43b6cba4d8cae257fce60240b9a18ecd0e4e52975",
+    "source/Patch.h": "b0bffd92317cc81d21122f653d5641187ff8f82efc75620abf44ad64ed5e243d",
+    "source/PatchImpl.cpp": "8b069f30ece264a0fc63e635cd05b7e9d5011c3ee3206d3f3fc9c7483857ece4"
+  }
+}

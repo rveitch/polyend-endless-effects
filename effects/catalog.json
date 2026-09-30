@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "effects": [
+    {
+      "id": "junoChorus",
+      "name": "Juno chorus candidate",
+      "source": "effects/junoChorus/PatchImpl.cpp",
+      "documentation": "effects/junoChorus/README.md",
+      "tests": [
+        {
+          "source": "effects/junoChorus/tests/ChorusMixTest.cpp",
+          "linkEffect": false
+        },
+        {
+          "source": "effects/junoChorus/tests/VintageCandidateTest.cpp",
+          "linkEffect": false
+        }
+      ]
+    },
+    {
+      "id": "passthrough",
+      "name": "Unity passthrough diagnostic",
+      "source": "effects/passthrough/PatchImpl.cpp",
+      "documentation": "effects/passthrough/README.md",
+      "tests": [
+        {
+          "source": "effects/passthrough/tests/PassthroughTest.cpp",
+          "linkEffect": true
+        }
+      ]
+    }
+  ]
+}
