@@ -96,6 +96,43 @@ int main()
     juce::AudioProcessor::copyXmlToBinary(*malformed.createXml(), invalidState);
     restored.setStateInformation(invalidState.getData(), static_cast<int>(invalidState.getSize()));
     require(restored.getParameters()[1]->getValue() == a.getParameters()[1]->getValue(), "duplicate state rejected");
+    EndlessProcessor trimmed, unity;
+    set(trimmed, "Output trim", 1.0f); // +6 dB in the -6..+6 dB range.
+    trimmed.prepareToPlay(48000, 64); unity.prepareToPlay(48000, 64);
+    auto boosted = input(257); auto plain = input(257);
+    trimmed.processBlock(boosted, midi); unity.processBlock(plain, midi);
+    const float boost = juce::Decibels::decibelsToGain(6.0f);
+    for (int ch = 0; ch < 2; ch += 1)
+        for (int i = 0; i < 257; i += 1)
+            require(std::abs(boosted.getSample(ch, i) - plain.getSample(ch, i) * boost) < 1.0e-7f, "trim after complete blend");
+    set(trimmed, "Bypass", 1); auto trimmedBypass = input(257); auto bypassReference = input(257);
+    trimmed.processBlock(trimmedBypass, midi); equal(trimmedBypass, bypassReference, "trim excluded from parameter bypass");
+    set(trimmed, "Bypass", 0); trimmedBypass = input(257);
+    trimmed.processBlockBypassed(trimmedBypass, midi); equal(trimmedBypass, bypassReference, "trim excluded from host bypass");
+    juce::MemoryBlock trimState; trimmed.getStateInformation(trimState);
+    EndlessProcessor trimRestored; trimRestored.setStateInformation(trimState.getData(), static_cast<int>(trimState.getSize()));
+    require(trimRestored.getParameters()[6]->getValue() == 1.0f, "trim saved and restored");
+    auto oldXml = juce::AudioProcessor::getXmlFromBinary(trimState.getData(), static_cast<int>(trimState.getSize()));
+    auto oldState = juce::ValueTree::fromXml(*oldXml);
+    oldState.setProperty("schemaVersion", 1, nullptr);
+    for (int i = oldState.getNumChildren() - 1; i >= 0; i -= 1)
+        if (oldState.getChild(i).getProperty("id").toString() == "outputTrim") oldState.removeChild(i, nullptr);
+    juce::AudioProcessor::copyXmlToBinary(*oldState.createXml(), trimState);
+    trimRestored.setStateInformation(trimState.getData(), static_cast<int>(trimState.getSize()));
+    require(trimRestored.getParameters()[6]->getValue() == 0.5f, "legacy preset resets trim to zero dB");
+    trimmed.prepareToPlay(44100, 64); auto trimUnsupported = input(257);
+    trimmed.processBlock(trimUnsupported, midi); equal(trimUnsupported, bypassReference, "trim excluded from unsupported rate");
+    EndlessProcessor ramped;
+    set(ramped, "Mix", 0); ramped.prepareToPlay(48000, 127); set(ramped, "Output trim", 1);
+    juce::AudioBuffer<float> constant(2, 1200);
+    for (int ch = 0; ch < 2; ch += 1) for (int i = 0; i < 1200; i += 1) constant.setSample(ch, i, 0.1f);
+    ramped.processBlock(constant, midi);
+    require(constant.getSample(0, 0) > 0.1f && constant.getSample(0, 0) < 0.101f, "trim ramp starts without gain jump");
+    require(std::abs(constant.getSample(0, 1199) - 0.1f * boost) < 1.0e-7f, "trim ramp reaches target");
+    for (int i = 1; i < 1200; i += 1) {
+        require(constant.getSample(0, i) >= constant.getSample(0, i-1), "trim ramp monotonic");
+        require(constant.getSample(0, i) == constant.getSample(1, i), "same trim on both channels");
+    }
     std::puts("PASS: processor parity, isolation, modes/state/reset, oversized callbacks, bypass and sample-rate guard");
     return EXIT_SUCCESS;
 }

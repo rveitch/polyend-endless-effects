@@ -39,6 +39,8 @@ private:
     std::atomic<float>* baseParameter{};
     std::atomic<float>* combinedParameter{};
     std::atomic<float>* bypassParameter{};
+    std::atomic<float>* trimParameter{};
+    juce::SmoothedValue<float> outputGain;
     std::atomic<bool> rateOk{false};
     int baseMode = 0;
     bool combinedMode = false;
