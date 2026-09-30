@@ -4,7 +4,7 @@ Read `docs/README.md`, `docs/code-audit.md`, and `docs/completion-plan.md` befor
 
 ## Ownership and current state
 
-- This Git repository owns the effect. The active target is `example/`, including its own copied SDK headers and wrappers. The sibling `../FxPatchSDK/` is not linked into this build.
+- This Git repository owns independent effects under `effects/`, registered in `effects/catalog.json`. The official SDK is pinned unchanged in `vendor/FxPatchSDK/` with `sdk.lock.json`. The sibling `../FxPatchSDK/` is reference only. `example/` contains compatibility shims and preserved saved artifacts.
 - At baseline commit `bc31ea43a596f6f19fcffdaf1db41efd5614376e`, `example/source/PatchImpl.cpp` contained two complete definitions. Branch `fix/chorus-build` removes the earlier duplicate and retains the later DSP revision; the ARM target build passes, but the DSP audit remains open.
 - The later block is an experimental revision, not a verified hardware model. See the audit before choosing which behavior to retain.
 - Do not overwrite working-tree changes, update the upstream SDK, or deploy a pedal without task authorization. Check status before editing. Keep the shared ChatGPT `sources/` mirror read-only.
@@ -12,10 +12,10 @@ Read `docs/README.md`, `docs/code-audit.md`, and `docs/completion-plan.md` befor
 ## Build and validation
 
 - SDK: C++20, Cortex-M7 hard-float, 48 kHz, no heap allocation in patch processing. Keep the public ABI intact.
-- Local build: `make -C example TOOLCHAIN=/Users/ryanveitch/nodejs/polyend/agt15-2/bin/arm-none-eabi- all`.
+- Local build: `make build EFFECT=all TOOLCHAIN=/Users/ryanveitch/nodejs/polyend/agt15-2/bin/arm-none-eabi-`. Host: `make test EFFECT=all`; tooling: `make test-tools`; artifacts: `make check EFFECT=all`. Legacy example commands still delegate.
 - Compiler warnings are errors. Run the target build after code changes. Host DSP tests complement but do not replace device listening and CPU validation.
 - Use a separate `BUILD_DIR` or a temporary directory for investigative builds. Never remove saved binaries during an audit.
-- The Makefile does not generate header dependencies. Use a fresh build directory or a deliberate clean build after header changes.
+- ARM rules generate header dependencies and invalidate objects on changed build settings. Snapshot edits must go through the explicit SDK update workflow; run builds and SDK updates sequentially. Manifests record source/SDK/compiler/flags and dirty identity.
 - Run finite test programs that exit. No persistent audio loops in diagnostics.
 
 ## Evidence and behavior
@@ -30,12 +30,12 @@ Use const and camelCase where appropriate; preserve SDK names and existing ABI c
 
 ## Pass-through diagnostic
 
-Branch `diagnostic/passthrough` adds `example/diagnostic/`; see its README for build and REW procedures. It reuses the SDK while excluding the chorus implementation. Use the dedicated Makefile and build directory. Preserve both audio channels exactly; hardware validation is separate from host sample-preservation tests.
+The active passthrough implementation is `effects/passthrough/`; see its README and the preserved `example/diagnostic/README.md` for REW procedures. It uses the same pinned SDK while excluding the chorus implementation. Use `make build EFFECT=passthrough` or the legacy diagnostic Makefile. Preserve both audio channels exactly; hardware validation is separate from host sample-preservation tests.
 
 ## Temporary chorus Mix mapping
 
 The 2026-09-28 test change preserves original stereo dry samples and maps 0-5%
-to true dry, noon to 50/50, and maximum to fully wet. See `example/tests/README.md`
+to true dry, noon to 50/50, and maximum to fully wet. See `effects/junoChorus/README.md`
 for validation/build commands and the separate final-product control preference.
 Always supply exact REW measurement names when requesting captures from Ryan.
 
@@ -52,3 +52,7 @@ The approved candidate now supersedes the experimental wet algorithm. Read
 headroom allowance and next capture names. Both host tests and ARM build pass;
 hardware validation is pending. Preserve diagnostic Mix until those captures
 are complete. Do not describe the provisional wet EQ or gain as circuit-exact.
+
+## Multi-effect and SDK maintenance (2026-09-30)
+
+Read `docs/effect-authoring.md`, `docs/sdk-maintenance.md` and `docs/audio-workflow.md` before adding effects or updating the SDK. Check upstream through `scripts/sdk.py check`; explicit reviewed imports use `update --ref <fullCommit> --apply`. Keep fork-only APIs out of the official contract. Use templates under `docs/templates/` for decision and hardware evidence records. Capture both channels and retain raw gain/timing. The relocation preserves Juno samples; it does not resolve outstanding pedal validation. Desktop audition remains evaluated only, with no wrapper installed.

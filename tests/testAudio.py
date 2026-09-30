@@ -36,3 +36,13 @@ class AudioTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class MeasurementCountTests(unittest.TestCase):
+    def testRawPeakCountsAndMonoConvention(self):
+        from compare import compareSamples
+        samples = array('f', [1.2, -1.2, 1.0, -1.0, 0.5, -0.5])
+        report = compareSamples(samples, samples, 48000)
+        self.assertEqual(report['a']['left']['clippedSamples'], 2)
+        self.assertEqual(report['a']['right']['finiteSamples'], 3)
+        self.assertEqual(report['monoConvention'], '(L + R) / 2')

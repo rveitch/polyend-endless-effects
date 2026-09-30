@@ -33,13 +33,13 @@
 
 **Interfaces:** `project.loadCatalog(root) -> dict`, `project.loadEffect(root, effectId) -> dict`; root CLI `list`, `build`, `test`, `check`; `buildSupport/arm.mk` consumes explicit source paths, toolchain, effect, build directory, patch name and load address.
 
-- [ ] Capture a source-hash baseline and preserve original source/header in ignored migration evidence.
-- [ ] Write CLI/build integration tests: real third fixture effect, single implementation, dependency rebuilding, unknown/path-traversal rejection, manifest identity, legacy entry points.
-- [ ] Watch new catalog/build tests fail against the absent CLI.
-- [ ] Import tracked SDK files from the exact official Git commit, record hashes, and relocate implementations without DSP changes.
-- [ ] Implement catalog validation, isolated ARM rules with .d dependencies and build-flag invalidation, host test runner, artifact manifests, and compatibility shims.
-- [ ] Run `python3 -m unittest discover -s tests -p 'testBuild.py' -v` and all existing host tests. Expected: PASS.
-- [ ] Build both ARM effects using the existing toolchain and commit the deliverable.
+- [x] Capture a source-hash baseline and preserve original source/header in ignored migration evidence.
+- [x] Write CLI/build integration tests: real third fixture effect, single implementation, dependency rebuilding, unknown/path-traversal rejection, manifest identity, legacy entry points.
+- [x] Watch new catalog/build tests fail against the absent CLI.
+- [x] Import tracked SDK files from the exact official Git commit, record hashes, and relocate implementations without DSP changes.
+- [x] Implement catalog validation, isolated ARM rules with .d dependencies and build-flag invalidation, host test runner, artifact manifests, and compatibility shims.
+- [x] Run `python3 -m unittest discover -s tests -p 'testBuild.py' -v` and all existing host tests. Expected: PASS.
+- [x] Build both ARM effects using the existing toolchain and commit the deliverable.
 
 ### Task 2: SDK maintenance and artifact validation
 
@@ -47,12 +47,12 @@
 
 **Interfaces:** `sdk.verifySnapshot(root) -> dict`, CLI `verify`, `check --ref`, `update --ref --apply`; `endl.inspectImage(path, root, loadAddress) -> dict` validates against the supported pinned ABI contract.
 
-- [ ] Write local Git fixture tests for read-only checking, additions/deletions, modified snapshot refusal, rollback on invalid/interrupted imports, lock provenance, and ABI warnings.
-- [ ] Write independent binary fixtures for truncated image, bad pointers, invalid BSS, optional callbacks, RAM bounds, and unsupported format.
-- [ ] Watch the SDK and inspector tests fail before implementation.
-- [ ] Implement staged/rollback imports, snapshot verification, upstream change reports, and full structural inspection; wire inspection into device builds and `check`.
-- [ ] Run `python3 -m unittest discover -s tests -p 'test*.py' -v`. Expected: PASS.
-- [ ] Verify the official remote still resolves to the pinned revision, inspect both real artifacts, and commit.
+- [x] Write local Git fixture tests for read-only checking, additions/deletions, modified snapshot refusal, rollback on invalid/interrupted imports, lock provenance, and ABI warnings.
+- [x] Write independent binary fixtures for truncated image, bad pointers, invalid BSS, optional callbacks, RAM bounds, and unsupported format.
+- [x] Watch the SDK and inspector tests fail before implementation.
+- [x] Implement staged/rollback imports, snapshot verification, upstream change reports, and full structural inspection; wire inspection into device builds and `check`.
+- [x] Run `python3 -m unittest discover -s tests -p 'test*.py' -v`. Expected: PASS.
+- [x] Verify the official remote still resolves to the pinned revision, inspect both real artifacts, and commit.
 
 ### Task 3: Stereo captures and comparisons
 
@@ -60,11 +60,11 @@
 
 **Interfaces:** stereo float WAV plus JSON sidecar; capture CLI accepts effect, stimulus/input WAV, normalized knobs, sample-scheduled events, callback size and duration; comparison CLI rejects incompatible input and emits raw L/R/mono and spectral metrics, with separately requested listening copies.
 
-- [ ] Write real passthrough round-trip, deterministic stereo, action scheduling/partition, mismatched metadata, malformed WAV, correlation/mono cancellation and gain-difference tests.
-- [ ] Watch each new component's tests fail before implementing it.
-- [ ] Implement finite probe, standard WAV I/O, deterministic stimuli, explicit event scheduling, provenance sidecars, comparison and optional listening copies.
-- [ ] Render original and relocated chorus with the same host harness for every mode at 12 seconds, distinct stereo input, multiple callback sizes and interrupted mode/Tone events. Compare float samples bit for bit.
-- [ ] Run the full test suite, save migration hashes/results under ignored build evidence, and commit.
+- [x] Write real passthrough round-trip, deterministic stereo, action scheduling/partition, mismatched metadata, malformed WAV, correlation/mono cancellation and gain-difference tests.
+- [x] Watch each new component's tests fail before implementing it.
+- [x] Implement finite probe, standard WAV I/O, deterministic stimuli, explicit event scheduling, provenance sidecars, comparison and optional listening copies.
+- [x] Render original and relocated chorus with the same host harness for every mode at 12 seconds, distinct stereo input, multiple callback sizes and interrupted mode/Tone events. Compare float samples bit for bit.
+- [x] Run the full test suite, save migration hashes/results under ignored build evidence, and commit.
 
 ### Task 4: Documentation, desktop evaluation and final review
 

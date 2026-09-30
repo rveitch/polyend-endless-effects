@@ -1,7 +1,7 @@
 # Multiple effects, validation, and upstream SDK maintenance
 
 Date: 2026-09-30
-Status: proposed design for Ryan's review; implementation has not started.
+Status: approved by Ryan on 2026-09-30; implementation and verification recorded in ../../repository-migration-20260930.md.
 
 ## Intended outcome
 
@@ -215,6 +215,4 @@ not an accepted reference. A successful desktop build does not establish device 
 - Local commits are authorized milestones. No push, PR, firmware update, or pedal
   deployment is inferred from this task.
 
-Before implementation, review this design and then its implementation plan as required
-by the architectural brainstorming workflow. Plan execution will remain in this chat
-unless Ryan chooses otherwise.
+Ryan approved implementation in this chat on 2026-09-30. The implementation plan and migration record describe delivery and verification.

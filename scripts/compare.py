@@ -15,7 +15,8 @@ from project import hashFile, writeJson
 def metrics(values):
     rms = math.sqrt(math.fsum(value * value for value in values) / len(values))
     peak = max(abs(value) for value in values)
-    return {'rms': rms, 'peak': peak, 'rmsDbfs': 20 * math.log10(rms) if rms else None,
+    return {'finiteSamples': len(values), 'clippedSamples': sum(abs(value) >= 1 for value in values),
+            'rms': rms, 'peak': peak, 'rmsDbfs': 20 * math.log10(rms) if rms else None,
             'peakDbfs': 20 * math.log10(peak) if peak else None}
 
 
@@ -65,7 +66,7 @@ def compareSamples(a, b, sampleRate):
         channels.append({'left': left, 'right': right, 'mono': [(x + y) / 2 for x, y in zip(left, right)]})
     frames = len(a) // 2
     fftSize = 2 ** min(15, frames.bit_length() - 1)
-    report = {'sampleRate': sampleRate, 'frames': frames, 'durationSeconds': frames / sampleRate,
+    report = {'sampleRate': sampleRate, 'frames': frames, 'monoConvention': '(L + R) / 2', 'durationSeconds': frames / sampleRate,
               'exactSamples': a == b, 'a': {}, 'b': {}, 'difference': {},
               'spectrum': {'window': 'Hann', 'startFrame': 0, 'frames': fftSize,
                            'binHz': sampleRate / fftSize, 'channels': {}}}

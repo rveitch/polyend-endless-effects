@@ -1,6 +1,8 @@
 # Repository and CLion workflow
 
-Verified 2026-09-19.
+Historical verification: 2026-09-19 and 2026-09-28.
+
+**Current workflow (2026-09-30):** implementation ownership is now `effects/`, the official SDK is `vendor/FxPatchSDK/`, and root commands are documented in [README](../README.md). Header dependencies and isolated effect builds are implemented. Legacy example Makefiles delegate; their clean command preserves saved binaries. The duplicate-definition failure below is historical. The approved vintage candidate builds and is preserved by sample-identical migration checks. Dated output paths below retain their original identities.
 
 ## Workspace map
 

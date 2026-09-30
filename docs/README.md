@@ -4,7 +4,7 @@ Research and local verification date: **2026-09-19**. This notebook records evid
 
 ## Start here
 
-1. [Project and build workflow](project-workflow.md): repository ownership, CLion run configurations, compiler and known build failure.
+1. [Current repository workflow](../README.md): effect selection, builds and tests. [Earlier project workflow](project-workflow.md) retains dated CLion and build-repair evidence.
 2. [Code audit](code-audit.md): confirmed defects and DSP assumptions in the committed source.
 3. [Polyend platform contract](platform/polyend-endless.md): current SDK, manual, controls, routing and update findings.
 4. [Juno circuit and measurement evidence](research/juno-chorus-evidence.md): what the sources actually establish.
@@ -14,6 +14,14 @@ Research and local verification date: **2026-09-19**. This notebook records evid
 8. [Validation protocol](validation.md): objective DSP checks and controlled listening comparisons.
 
 9. [Stereo captures, 2026-09-28](stereo-captures-20260928.md): recorded mode comparisons and unresolved bypass headroom concern.
+
+## Current authoring and maintenance
+
+- [Effect authoring](effect-authoring.md) and [decision/hardware templates](templates/effect-decision-record.md)
+- [SDK maintenance](sdk-maintenance.md)
+- [Stereo capture and comparison](audio-workflow.md)
+- [Migration verification](repository-migration-20260930.md)
+- [Desktop audition evaluation](desktop-audition-evaluation.md)
 
 ## Latest capture and design milestones
 
