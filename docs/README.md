@@ -26,6 +26,9 @@ Research and local verification date: **2026-09-19**. This notebook records evid
 
 ## Latest capture and design milestones
 
+- [Slow TAL-inspired blue revision](blue-tal-20261002.md)
+- [Accepted gain-corrected pedal baseline](pedal-gain47-20261002.md)
+
 - [Implemented vintage candidate and pedal testing handoff](vintage-candidate-20260929.md)
 
 - [Mode I reference comparison](modeI-reference-comparison-20260929.md)
@@ -35,8 +38,8 @@ Research and local verification date: **2026-09-19**. This notebook records evid
 ## Current assessment
 
 The approved vintage candidate is implemented and host-tested on `fix/chorus-build`.
-It replaces the experimental dual-rate combined mode with fast common modulation
-and adds provisional vintage wet filtering. See the candidate handoff above for
+Its original fast combined mode is now superseded by the user-approved slow
+TAL-inspired blue extension; red and green and the provisional wet filtering remain intact. See the candidate handoff above for
 its exact build, validation limits and next hardware tests. The earlier audit
 records historical defects and is not a description of the current source.
 

@@ -30,7 +30,7 @@ float measure(float frequency, bool combined = false)
                 difference = std::max(difference, std::abs(left[i] - right[i]));
             }
     }
-    if (combined) check(difference < 0.000001f, "combined mode has common wet output");
+    if (combined) check(difference > 0.001f, "slow combined mode has stereo wet movement");
     return static_cast<float>(std::sqrt(energy / (1199.0 * 64.0)));
 }
 
@@ -41,6 +41,7 @@ void motionTest()
     float maximum[3]{};
     int crossings[3]{};
     float previous[3]{};
+    int lastBlueCrossing = -1;
     for (int i = 0; i < 480000; i += 1)
     {
         for (int mode = 0; mode < 3; mode += 1)
@@ -48,19 +49,34 @@ void motionTest()
             const float value = motion.delayMs(mode, false);
             minimum[mode] = std::min(minimum[mode], value);
             maximum[mode] = std::max(maximum[mode], value);
-            const float center = mode == 2 ? 3.5f : 3.505f;
-            if (i > 0 && previous[mode] < center && value >= center) crossings[mode] += 1;
+            const float center = mode == 2 ? 3.455f : 3.505f;
+            if (i > 0 && previous[mode] < center && value >= center) {
+                crossings[mode] += 1;
+                if (mode == 2) {
+                    if (lastBlueCrossing >= 0)
+                        check(std::abs(48000.0f / static_cast<float>(i - lastBlueCrossing) - 0.4f) < 0.0001f,
+                              "blue measured cycle rate is 0.4 Hz");
+                    lastBlueCrossing = i;
+                }
+            }
             previous[mode] = value;
-            check(std::abs((mode == 2 ? value : 2.0f * center - value) - motion.delayMs(mode, true)) < 0.000002f, "mode stereo relationship");
+            if (mode < 2)
+                check(std::abs(2.0f * center - value - motion.delayMs(mode, true)) < 0.000002f, "red and green opposing stereo relationship");
+            else {
+                const float normalizedLeft = (value - center) / 2.135f;
+                const float normalizedRight = (motion.delayMs(mode, true) - center) / 2.135f;
+                check(std::abs(normalizedLeft * normalizedLeft + normalizedRight * normalizedRight - 1.0f) < 0.00001f,
+                      "blue quarter-cycle stereo relationship");
+            }
         }
         motion.advance();
     }
     for (int mode = 0; mode < 3; mode += 1)
     {
-        check(std::abs(minimum[mode] - (mode == 2 ? 3.3f : 1.66f)) < 0.001f, "minimum delay");
-        check(std::abs(maximum[mode] - (mode == 2 ? 3.7f : 5.35f)) < 0.001f, "maximum delay");
+        check(std::abs(minimum[mode] - (mode == 2 ? 1.32f : 1.66f)) < 0.001f, "minimum delay");
+        check(std::abs(maximum[mode] - (mode == 2 ? 5.59f : 5.35f)) < 0.001f, "maximum delay");
     }
-    check(crossings[0] == 5 && crossings[1] == 8 && crossings[2] == 97, "modulation cycle counts over ten seconds");
+    check(crossings[0] == 5 && crossings[1] == 8 && (crossings[2] == 3 || crossings[2] == 4), "modulation cycle counts over ten seconds");
 }
 
 void headroomAndTransitions(float inputPeak)

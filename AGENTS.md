@@ -74,3 +74,7 @@ Ryan clarified that the requested current pedal build must include +4.7 dB. It i
 ## Accepted working baseline, 2026-10-02
 
 Ryan tested the corrected gain47 artifact and reports no real perceived engagement level drop. Commit this as the accepted current working baseline; its exact identity is in `docs/pedal-gain47-20261002.md`. Preserve red Mode I and green Mode II. Full Mix is audible as subtle warble, consistent with wet-only processing. The next requested change is blue I+II toward the slower TAL reference; keep that revision separate from the accepted baseline. Known input-headroom and hardware-validation limits remain.
+
+## Slow blue revision, 2026-10-02
+
+Ryan approved slow TAL-inspired blue I+II and authorized build, commit and push. Read `docs/blue-tal-20261002.md`. Blue uses about 0.4 Hz sine motion, 1.32..5.59 ms nominal delays, and quarter-cycle L/R offset. It is a preferred extension, not measured Juno combined-mode behavior or a copy of TAL internals. Red/green DSP and pedal +4.7 dB correction remain intact. The accepted prior version is commit `24cb3df`; retain its saved artifact. Desktop retains separate Output trim. Pedal listening acceptance of the new blue remains pending.

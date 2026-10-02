@@ -124,13 +124,18 @@ class ChorusMotion
     {
         const float phase = static_cast<float>(m_phase[mode]) * (1.0f / 4294967296.0f);
         if (mode == 2)
-            return 3.5f + 0.2f * std::sin(2.0f * static_cast<float>(M_PI) * phase);
+        {
+            // User-selected slow stereo extension inspired by the TAL capture.
+            // Quarter-cycle separation is our voicing choice, not TAL internals.
+            const float stereoPhase = phase + (right ? 0.25f : 0.0f);
+            return 3.455f + 2.135f * std::sin(2.0f * static_cast<float>(M_PI) * stereoPhase);
+        }
         const float triangle = 4.0f * std::abs(phase - 0.5f) - 1.0f;
         return 3.505f + (right ? -1.845f : 1.845f) * triangle;
     }
   private:
     // Unsigned wrap gives continuous phase without software double arithmetic.
-    static constexpr uint32_t phaseIncrements[3] = {45902u, 77220u, 872415u};
+    static constexpr uint32_t phaseIncrements[3] = {45902u, 77220u, 35791u};
     uint32_t m_phase[3]{};
 };
 
