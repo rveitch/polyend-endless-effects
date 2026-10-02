@@ -169,6 +169,7 @@ class PatchImpl final : public Patch
             m_transitionRemaining = 960;
         }
         const float mix = getMix(m_knobMix);
+        const float outputGain = getOutputGain(mix);
         const float stereoAmount = getStereoAmount(m_knobWidth);
         m_inputLP.setCutoff(8000.0f);
         for (int mode = 0; mode < 3; mode += 1)
@@ -208,8 +209,8 @@ class PatchImpl final : public Patch
             wetR = mid + (wetR - mid) * stereoAmount;
             if (mix > 0.0f)
             {
-                audioBufferLeft[i] = dryLeft * (1.0f - mix) + wetL * mix;
-                audioBufferRight[i] = dryRight * (1.0f - mix) + wetR * mix;
+                audioBufferLeft[i] = (dryLeft * (1.0f - mix) + wetL * mix) * outputGain;
+                audioBufferRight[i] = (dryRight * (1.0f - mix) + wetR * mix) * outputGain;
             }
         }
     }
@@ -248,6 +249,21 @@ class PatchImpl final : public Patch
     }
 
   private:
+    float getOutputGain([[maybe_unused]] float mix) const
+    {
+#if defined(ENDLESS_DESKTOP)
+        // Desktop keeps its existing adjustable trim, avoiding a double boost
+        // in saved projects which already use +4.7 dB for audition.
+        return 1.0f;
+#else
+        // Pedal test candidate: +4.7 dB at noon and above. Preserve exact dry
+        // and approach the correction continuously below noon. Requires input
+        // headroom; this is linear gain, not a limiter or circuit calibration.
+        constexpr float correction = 1.7179084f;
+        return 1.0f + (correction - 1.0f) * std::min(2.0f * mix, 1.0f);
+#endif
+    }
+
     float getMix(float knob) const
     {
         // Temporary diagnostic mapping, not the final Juno control design.
